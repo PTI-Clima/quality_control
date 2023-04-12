@@ -15,8 +15,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/> <http://www.gnu.org/licenses/gpl.txt/>.
 #####################################################################
 
-libraryf(reshape)
-libraryf(reshape2)
+suppressPackageStartupMessages({
+  library(reshape)
+  library(reshape2)})
 
 ##################################################################
 #### FUNCION PARA LEER LOS DATOS DE LOS ARCHIVOS TXT DE AEMET ####
