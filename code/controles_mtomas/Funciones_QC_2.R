@@ -356,7 +356,7 @@ tratamiento_unicos <- function(x, s, b, d, n, cons = F) {
 #'
 #' @examples
 agrupar_duplicados <- function(data, n = 31, m = 1) {
-  requiref(plyr)
+  SuppresWarningsStartupMessages(require(plyr))
   
   s <- list(NULL)
   if (dim(data)[1] > 0) {
@@ -1077,7 +1077,7 @@ maximo_teorico <- function(month,
 #'
 #' @examples
 agrupar_duplicados_offset <- function(x, a) {
-  requiref(plyr)
+  suppressPackageStartupMessages(require(plyr))
   
   if (dim(a)[1] == 0) {
     return(NULL)

@@ -18,7 +18,7 @@
 # No mostrar warnings al compilar
 Sys.setenv("PKG_CXXFLAGS" = "-w")
 
-libraryf(compiler)
+suppressPackageStartupMessages(library(compiler))
 compilePKGS(TRUE)
 enableJIT(3)
 
@@ -29,7 +29,7 @@ setTimeLimit(cpu = Inf,
 setSessionTimeLimit(cpu = Inf, elapsed = Inf)
 options(error = quote(dump.frames("testdump", TRUE)))
 
-setwd("/mnt/dostb3/descargas/daily_correction")
+setwd("/mnt/dostb3/descargas/daily_correction") # MODIFICAR: ELIMINAR NECESIDAD DE DIRECTORIO
 
 ##################################################################################
 
@@ -61,7 +61,7 @@ C_SIAR = "SIAR"
 
 ##################################################################################
 ###UNICA CLASE QUE LLAMA A LOS FICHEROS DE controles_mtomas###
-library(R6)
+suppressPackageStartupMessages(library(R6))
 ControlesMtomas <- R6Class('ControlesMtomas', )
 
 #' Revisión de los datos diarios de un tipo, código de mtomas
@@ -70,7 +70,7 @@ ControlesMtomas <- R6Class('ControlesMtomas', )
 #' @export
 #' @examples
 ControlesMtomas$controles = function(type){
-  sourcef(file.path(route.filesR, "controles_mtomas", "Controles.R"))
+  source(file.path(route.filesR, "controles_mtomas", "Controles.R"))
   launchControles(type)
 }
 
@@ -150,7 +150,7 @@ seqf = function(from = 1, to = 1) {
 #'
 #' @examples
 prepare.data = function(name.type) {
-  # Nombre del fichero que guarda las coordenadas coords_NAMES5.RData (funsión distancias de Funciones_QC.R)
+  # Nombre del fichero que guarda las coordenadas coords_NAMES5.RData (función distancias de Funciones_QC.R)
   NAMES5 = c()
   NAMES5[C_TMAX] = C_T
   NAMES5[C_TMIN] = C_T
@@ -209,7 +209,7 @@ prepare.data = function(name.type) {
   dir.create(file.path(folder, "data_coor"), showWarnings = FALSE)
   data.daily = correctUnits(data.daily, name.type)
 
-  # Eliminar 'de los nombres para evitar problemas en lecturas (Se pierden datos en lectura sin avisar según coo se lea)
+  # Eliminar 'de los nombres para evitar problemas en lecturas (Se pierden datos en lectura sin avisar según como se lea)
   coor[, "NOMBRE"] = gsub("'", " ", as.character(coor[, "NOMBRE"]))
 
   write.table(
