@@ -1,0 +1,17 @@
+Package: qualityControl
+Type: Package
+Version: 0.1.0
+Date: 2023-04-10
+Title: Quality control
+Description: Daily quality control on the raw input data
+License: GPL (>= 3)
+URL: https://lcsc.csic.es
+LazyLoad: no
+Encoding: UTF-8
+Language: en-US
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+RoxygenNote: 7.2.3
+VignetteBuilder: knitr
