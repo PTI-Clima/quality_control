@@ -29,7 +29,7 @@ setTimeLimit(cpu = Inf,
 setSessionTimeLimit(cpu = Inf, elapsed = Inf)
 options(error = quote(dump.frames("testdump", TRUE)))
 
-setwd("/mnt/dostb3/descargas/daily_correction") # MODIFICAR: ELIMINAR NECESIDAD DE DIRECTORIO
+#setwd("/mnt/dostb3/descargas/daily_correction") # MODIFICAR: ELIMINAR NECESIDAD DE DIRECTORIO
 
 ##################################################################################
 
@@ -70,7 +70,8 @@ ControlesMtomas <- R6Class('ControlesMtomas', )
 #' @export
 #' @examples
 ControlesMtomas$controles = function(type){
-  source(file.path(route.filesR, "controles_mtomas", "Controles.R"))
+  # source(file.path(route.filesR, "controles_mtomas", "Controles.R"))
+  source("C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\Controles.R")
   launchControles(type)
 }
 
@@ -252,7 +253,8 @@ readOriData = function(type) {
 #' @examples
 #' controlesmtomas()
 controlesmtomas = function() {
-  NAMES = c(C_T, C_HR, C_W, C_IN, C_PR, C_R)
+ # NAMES = c(C_T, C_HR, C_W, C_IN, C_PR, C_R)
+  NAMES = c(C_HR)
   type = NAMES[length(NAMES)]
   for (type in NAMES) {
     print(type)
@@ -264,6 +266,9 @@ controlesmtomas = function() {
 ##################################################################################
 
 data_source = C_AEMET
+library(tictoc)
+tic()
 controlesmtomas()
-data_source = C_SIAR
-controlesmtomas()
+toc()
+# data_source = C_SIAR
+# controlesmtomas()

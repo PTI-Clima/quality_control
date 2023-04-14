@@ -356,7 +356,7 @@ tratamiento_unicos <- function(x, s, b, d, n, cons = F) {
 #'
 #' @examples
 agrupar_duplicados <- function(data, n = 31, m = 1) {
-  SuppresWarningsStartupMessages(require(plyr))
+  suppressPackageStartupMessages(require(plyr))
   
   s <- list(NULL)
   if (dim(data)[1] > 0) {

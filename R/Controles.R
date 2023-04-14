@@ -55,9 +55,13 @@ if (!exists("year.new")) {
 route.filesR = "code"
 codeFiles = file.path(route.filesR, "controles_mtomas")
 
-sourcef(file.path(codeFiles, 'Funciones_QC.R'))
-sourcef(file.path(codeFiles, 'Funciones_QC_2.R'))
-sourcef(file.path(codeFiles, 'Funciones_QC_1.R'))
+# source(file.path(codeFiles, 'Funciones_QC.R'))
+# source(file.path(codeFiles, 'Funciones_QC_2.R'))
+# source(file.path(codeFiles, 'Funciones_QC_1.R'))
+
+source(file.path('C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\Funciones_QC.R'))
+source(file.path('C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\Funciones_QC_1.R'))
+source(file.path('C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\Funciones_QC_2.R'))
 
 # Ruta en la que están los datos de entrada
 dataFiles = "data"
@@ -113,7 +117,8 @@ load.data = function(file) {
 
 # Compilamos desde R: gcc simple.c -O2 -o simple
 if (!exists("main_deteccion_duplicados")) {
-  sourceCpp(file.path(codeFiles, "simple.cpp"))
+  # sourceCpp(file.path(codeFiles, "simple.cpp"))
+  sourceCpp(file.path('C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\simple.cpp'))
 }
 
 #' Función que llama al código escrito por el gran mtomas
@@ -125,6 +130,7 @@ if (!exists("main_deteccion_duplicados")) {
 #'
 #' @examples
 launchControles = function(type) {
-  sourcef(file.path(codeFiles, paste0('Controles_', type, '.R')))
+  # sourcef(file.path(codeFiles, paste0('Controles_', type, '.R')))
+  source(file.path(paste0("C:\\Users\\SERGIO\\Documents\\Github\\quality_control\\R\\Controles_", type, ".R")))
   controles(var = type)
 }

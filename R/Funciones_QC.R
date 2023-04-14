@@ -296,15 +296,17 @@ lectura_datos_aemet <- function(a, var) {
   }
 
   ## Obtenemos el listado de archivos de texto de la variable de interés
-  files <-
-    list.files(
-      path = a,
-      pattern = ".txt$|.csv$|.tmp$",
-      full.names = TRUE,
-      recursive = TRUE
-    )
-  files <- files[grepl(var.name, files)]
-  files <- files[!grepl("Descripcion", files)]
+  # files <-
+  #   list.files(
+  #     path = a,
+  #     pattern = ".txt$|.csv$|.tmp$",
+  #     full.names = TRUE,
+  #     recursive = TRUE
+  #   )
+  # files <- files[grepl(var.name, files)]
+  # files <- files[!grepl("Descripcion", files)]
+  
+  files = "C:\\Users\\SERGIO\\Documents\\Github\\Datos_qc\\hum_relativa22_muestra.csv"
 
   DF <- NULL
 
@@ -383,6 +385,8 @@ lectura_datos_aemet <- function(a, var) {
         encoding = 'latin1',
         quote = ''
       )[, w]
+      h <- head(dat)
+      print(h)
 
       if ("DIA" %in% colnames(dat)) {
         dat = dat[!duplicated(dat[, c("INDICATIVO", "AÑO", "MES", "DIA")], fromLast =
@@ -571,16 +575,18 @@ distancias <- function(a, var, data_source = C_AEMET) {
         'LONGITUD',
         'LATITUD'
       )
-
-    files <-
-      list.files(
-        path = a,
-        pattern = ".txt$|.csv$|.tmp$",
-        full.names = TRUE,
-        recursive = TRUE
-      )
-    files <- files[grepl(var.name, files)]
-    files <- files[!grepl("Descripcion", files)]
+# 
+#     files <-
+#       list.files(
+#         path = a,
+#         pattern = ".txt$|.csv$|.tmp$",
+#         full.names = TRUE,
+#         recursive = TRUE
+#       )
+#     files <- files[grepl(var.name, files)]
+#     files <- files[!grepl("Descripcion", files)]
+    
+    files = "C:\\Users\\SERGIO\\Documents\\Github\\Datos_qc\\hum_relativa22_muestra.csv"
 
     DF <- NULL
 
@@ -608,6 +614,7 @@ distancias <- function(a, var, data_source = C_AEMET) {
   save.data(coords, file = paste('coords_', var, '.RData', sep = ''))
 
   d <- DF[, c('C_X', 'C_Y')]
+  print(DF)
   distancia <- dist(d)
   distancia <- as.data.frame(as.matrix(distancia))
   rownames(distancia) <- colnames(distancia) <- DF$INDICATIVO
