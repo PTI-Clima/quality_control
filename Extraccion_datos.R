@@ -1,8 +1,8 @@
 setwd("C:/Users/SERGIO/Documents/Github/Datos_qc") # Set working directory
 library(dplyr)
 
-# Sacamos cuatro estaciones porque la fase de comparación con vecinos requiere de la 
-# comparación de la estación con tres cercanas
+# Sacamos 6 estaciones porque la fase de comparación con vecinos requiere de la 
+# comparación de la estación con otras 5 cercanas
 
 
 # HUMEDAD RELATIVA
@@ -132,7 +132,7 @@ presion22_muestra = presion_22[presion_22$NOMBRE == "ANDRATX - SANT ELM" |
                                  presion_22$NOMBRE == "SANTANYÍ" |
                                  presion_22$NOMBRE == "PORTO COLOM", ] 
 
-presion22_muestra %>% # 9355 entradas correspondientes a 4 estaciones y 1886 días
+presion22_muestra %>% # 9355 entradas correspondientes a 6 estaciones y 1886 días
   count(AÑO, MES, DIA) %>% 
   nrow()
 
@@ -142,4 +142,37 @@ write.csv(presion22_muestra,
           row.names = F)
 rm(presion22_muestra)
 rm(presion_22)
+
+
+
+#----------------- PRUEBA DE LOS CONTROLES INTERNOS: REPETICIÓN Y CEROS ------------- #
+
+hum_relativa22 <- as.data.frame(
+  data.table::fread("~/Github/quality_control/hum_relativa22_muestra.csv",
+                    encoding = "Latin-1", 
+                    sep = ","))
+
+# Convertimos los valores de la estación de LLUC en una repetición del mismo valor (85)
+
+hum_relativa22$HU13[hum_relativa22$NOMBRE == "LLUC"] <- 85
+
+# Introducimos ceros sustituyendo al número 91 en HU07 y HU18
+hum_relativa22 %>% 
+  filter(HU07 == 91) %>% 
+  count() # hay 211 datos a esas horas con el índice a 91
+
+hum_relativa22 %>% 
+  filter(HU18 == 87) %>% 
+  count() # hay 265 datos a esas horas con el índice a 91
+
+hum_relativa22$HU07[hum_relativa22$HU07 == 91] <- 0
+hum_relativa22$HU18[hum_relativa22$HU18 == 87] <- 0
+
+write.csv(hum_relativa22, 
+          "hum_muestra_controles_internos.csv",
+          sep = ";",
+          row.names = F,
+          )
+
+  
 
