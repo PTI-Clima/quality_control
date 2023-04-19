@@ -375,6 +375,8 @@ lectura_datos_aemet <- function(a, var) {
         encoding = 'latin1',
         quote = ''
       )[, w]
+      h <- head(dat)
+      print(h)
 
       if ("DIA" %in% colnames(dat)) {
         dat = dat[!duplicated(dat[, c("INDICATIVO", "AÑO", "MES", "DIA")], fromLast =
@@ -595,6 +597,7 @@ distancias <- function(a, var, data_source = C_AEMET) {
   save.data(coords, file = paste('coords_', var, '.RData', sep = ''))
 
   d <- DF[, c('C_X', 'C_Y')]
+  print(DF)
   distancia <- dist(d)
   distancia <- as.data.frame(as.matrix(distancia))
   rownames(distancia) <- colnames(distancia) <- DF$INDICATIVO
