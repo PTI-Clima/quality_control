@@ -143,7 +143,59 @@ write.csv(presion22_muestra,
 rm(presion22_muestra)
 rm(presion_22)
 
+# PLUVIO
 
+pluvio_22 <- as.data.frame(
+  data.table::fread("~/Github/Datos_qc/data/904_update_2022_auto/PluvioDESEMON.csv",
+                    encoding = "Latin-1", 
+                    sep = ";"))
+
+unique(pluvio_22$NOMBRE)
+
+pluvio22_muestra = pluvio_22[pluvio_22$NOMBRE == "POLLENSA      TORRE ARIANT" |  
+                                 pluvio_22$NOMBRE == "PORT DE SOLLER SA TALAIA" |
+                                 pluvio_22$NOMBRE == "SÓLLER" |
+                                 pluvio_22$NOMBRE == "FORNALUTX (ES MARROIG)" |
+                                 pluvio_22$NOMBRE == "SOLLER (CONVENTO)" |
+                                 pluvio_22$NOMBRE == "SOLLER (SA VINYASSA)" |
+                                 pluvio_22$NOMBRE == "PALMA-PUERTO" |
+                                 pluvio_22$NOMBRE == "LLUC", ] 
+pluvio22_muestra %>% # 3814 entradas correspondientes a 8 estaciones y 62 días
+  count(AÑO, MES) %>% 
+  nrow()
+
+write.csv(pluvio22_muestra, 
+          "pluvio22_muestra.csv",
+          sep = ",",
+          row.names = F)
+rm(pluvio22_muestra)
+rm(pluvio_22)
+
+# RADIACIÓN
+
+radiacion_22 <- as.data.frame(
+  data.table::fread("~/Github/Datos_qc/data/904_update_2022_auto/RadiacionDESEMON.csv",
+                    encoding = "Latin-1", 
+                    sep = ";"))
+
+unique(radiacion_22$NOMBRE)
+
+rad22_muestra = radiacion_22[radiacion_22$NOMBRE == "LANZAROTE/AEROPUERTO" |  
+                               radiacion_22$NOMBRE == "FUERTEVENTURA/AEROPUERTO" |
+                               radiacion_22$NOMBRE == "TENERIFE/SUR" |
+                               radiacion_22$NOMBRE == "IZAÑA" |
+                               radiacion_22$NOMBRE == "TENERIFE/LOS RODEOS" |
+                               radiacion_22$NOMBRE == "STA.CRUZ DE TENERIFE" |
+                               radiacion_22$NOMBRE == "SAN BARTOLOME TIRAJANA-C.INSULAR TURISMO", ]
+
+rad22_muestra %>% # 14196 entradas correspondientes a 8 estaciones y 1857 días
+  count(AÑO, MES, DIA) %>% 
+  nrow()
+
+write.csv(rad22_muestra, 
+          "rad22_muestra.csv",
+          sep = ",",
+          row.names = F)
 
 #----------------- PRUEBA DE LOS CONTROLES INTERNOS: REPETICIÓN Y CEROS ------------- #
 
@@ -174,5 +226,96 @@ write.csv(hum_relativa22,
           row.names = F,
           )
 
-  
+
+#----------------- PRUEBA DE LOS CONTROLES INTERNOS: CEROS ------------- #
+# Convertimos los valores de temperatura máxima de tres
+# horas en 0.
+
+temp22_muestra$TMAX1[temp22_muestra$TMAX1 == 311] <- 0
+temp22_muestra$TMAX13[temp22_muestra$TMAX13 == 100] <- 0
+temp22_muestra$TMAX18[temp22_muestra$TMAX18 == 127] <- 0
+
+write.csv(temp22_muestra, 
+          "temp_muestra_controles_internos.csv",
+          sep = ";",
+          row.names = F,
+)
+
+# ----------- INSOLACIÓN MUESTRA ALEATORIA --------------- #
+set.seed(123)
+muestra <- sample(1:nrow(ins_22), size = 10000, replace = F)
+df <- ins_22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "insolacion_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+# ---------- HUMEDAD MUESTRA ALEATORIA ------------------- # 
+set.seed(123)
+muestra <- sample(1:nrow(hum_relativa22), size = 10000, replace = F)
+df <- hum_relativa22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "hr_muestra_aleatoria.csv",
+          row.names = F,
+)
+write.table(hum_relativa22, file = "hr_muestra_aleatoria2.csv", 
+            sep = ";", col.names = TRUE, row.names = FALSE)
+
+# ---------- TEMPERATURA MUESTRA ALEATORIA ------------------- # 
+set.seed(123)
+muestra <- sample(1:nrow(temp22), size = 10000, replace = F)
+df <- temp22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "temp_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+# ----------------- VIENTO MUESTRA ALEATORIA -------------------- #
+
+set.seed(123)
+muestra <- sample(1:nrow(viento_22), size = 10000, replace = F)
+df <- viento_22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "viento_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+# --------------- PRESIÓN MUESTRA ALEATORIA ------------------- # 
+set.seed(123)
+muestra <- sample(1:nrow(presion_22), size = 10000, replace = F)
+df <- presion_22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "presion_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+# --------------- PLUVIO MUESTRA ALEATORIA ---------------- #
+set.seed(123)
+muestra <- sample(1:nrow(pluvio_22), size = 10000, replace = F)
+df <- pluvio_22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "pluvio_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+# ---------------- RADIACIÓN MUESTRA ALEATORIA ----------------- #
+set.seed(123)
+muestra <- sample(1:nrow(radiacion_22), size = 10000, replace = F)
+df <- radiacion_22[muestra,]
+row.names(df) <- NULL
+write.csv(df, 
+          "radiacion_muestra_aleatoria.csv",
+          row.names = F,
+)
+
+hum_relativa22 <- as.data.frame(
+  data.table::fread("~/Github/datos_qc/hr_muestra_aleatoria2.csv",
+                    encoding = "Latin-1", 
+                    sep = ";"))
 
