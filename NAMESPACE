@@ -1,3 +1,14 @@
 useDynLib(qualityControl, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
+
+export(launch.all.controls)
+export(launch.controls)
+export(qc.apply)
+
+import(chron)
+import(lattice)
+import(Hmisc)
+import(reshape)
+import(reshape2)
+import(plyr)

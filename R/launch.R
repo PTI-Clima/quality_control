@@ -1,8 +1,8 @@
 # Primera versión del fichero de funciones
 
-suppressPackageStartupMessages(library(Rcpp))
-suppressPackageStartupMessages(library(compiler))
-suppressPackageStartupMessages(library(R6))
+# suppressPackageStartupMessages(library(Rcpp))
+# suppressPackageStartupMessages(library(compiler))
+# suppressPackageStartupMessages(library(R6))
 
 #' Calculate the directory name for a given year or day value
 #'
@@ -48,7 +48,6 @@ year.new.dir.calc = function(year.new) {
 #'
 #' @return None
 #'
-#' @import chron
 #' @importFrom lattice xyplot
 #'
 prepare.data <- function(name.type, dataOutFiles) {
@@ -150,7 +149,7 @@ prepare.data <- function(name.type, dataOutFiles) {
 #' @param data.source Character string indicating the data source (default is "AEMET")
 #'
 #' @return None
-#' @importFrom Rcpp sourceCpp
+#' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc
 #'
 #' @export
 qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", data.source = "AEMET") {
@@ -178,6 +177,8 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   # Launch mtomas code##########################################################
 
   for (type in vars) {
+    
+    print(paste0("Launching control for: ", type))
 
     controles(type)
 
@@ -283,7 +284,7 @@ save.data = function(..., file) {
 #'
 #' @return Objects loaded from the file
 #'
-load.data = function(file, dataOutFiles) {
+load.data = function(file) {
   newUrl = file.path(dataOutFiles, file)
   envir = parent.frame()
   load(newUrl, envir = envir)

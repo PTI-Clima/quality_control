@@ -15,8 +15,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/> <http://www.gnu.org/licenses/gpl.txt/>.
 #####################################################################
 
-library(reshape)
-library(reshape2)
+# library(reshape)
+# library(reshape2)
 
 ##################################################################
 #### FUNCION PARA LEER LOS DATOS DE LOS ARCHIVOS TXT DE AEMET ####
@@ -83,7 +83,7 @@ compatibles_row_col = function(data1, data2) {
 #'
 #' @examples
 lectura_datos_siar_var = function(a, var) {
-  library(chron)
+  # library(chron)
   col.name = toupper(var)
   file.name = var
   if (var == C_RA) {
@@ -388,16 +388,16 @@ lectura_datos_aemet <- function(a, var) {
       dat_2 <- dat[, c(1:4, 7)]
       dat_3 <- dat[, c(1:4, 8)]
 
-      dat_0 <- cast(dat_0, INDICATIVO + 'AÑO' + MES ~ DIA, value = colnames(dat_0)[5])
+      dat_0 <- cast(dat_0, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_0)[5])
       dat_0 = bind34(dat_0)
       colnames(dat_0)[4:34] <- paste(var, '00_', c(1:31), sep = '')
-      dat_1 <- cast(dat_1, INDICATIVO + 'AÑO' + MES ~ DIA, value = colnames(dat_1)[5])
+      dat_1 <- cast(dat_1, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_1)[5])
       dat_1 = bind34(dat_1)
       colnames(dat_1)[4:34] <- paste(var, '07_', c(1:31), sep = '')
-      dat_2 <- cast(dat_2, INDICATIVO + 'AÑO' + MES ~ DIA, value = colnames(dat_2)[5])
+      dat_2 <- cast(dat_2, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_2)[5])
       dat_2 = bind34(dat_2)
       colnames(dat_2)[4:34] <- paste(var, '13_', c(1:31), sep = '')
-      dat_3 <- cast(dat_3, INDICATIVO + 'AÑO' + MES ~ DIA, value = colnames(dat_3)[5])
+      dat_3 <- cast(dat_3, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_3)[5])
       dat_3 = bind34(dat_3)
       colnames(dat_3)[4:34] <- paste(var, '18_', c(1:31), sep = '')
 
@@ -445,7 +445,7 @@ lectura_datos_aemet <- function(a, var) {
                               FALSE),]
 
       dat <-
-        cast(dat, INDICATIVO + 'AÑO' + MES ~ DIA, value = colnames(dat)[5])
+        cast(dat, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat)[5])
       dat = bind34(dat)
       DF <- rbind(DF, dat)
       rm(dat)
@@ -568,13 +568,12 @@ distancias <- function(a, var, data_source = C_AEMET) {
     files <- files[grepl(var.name, files)]
     files <- files[!grepl("Descripcion", files)]
     
-    # files <- "C:\\Users\\mgil\\Downloads\\hum_relativa22_muestra.csv"
-
     DF <- NULL
 
     ## Leemos los datos
     f <- files[1]
     for (f in files) {
+      print(f)
       dat <- read.table(
         paste(f, sep = ""),
         sep = ";",
@@ -1031,7 +1030,6 @@ n_dias_duplicados <- function(data, meta) {
   stations <- as.character(unique(data$INDICATIVO))
   sta <- 1
   for (sta in 1:length(stations)) {
-    # print(stations[sta])
     dat <- data[data$INDICATIVO == stations[sta], ]
     if (dim(dat)[1] > 1) {
       meses <- which(rowSums(dat[, 4:34] != 0) > 6)
@@ -1391,8 +1389,8 @@ agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
 #'
 #' @examples
 reformat <- function(datos) {
-  library(chron)
-  library(Hmisc) #CORREGIDO_MTOMAS
+  # library(chron)
+  # library(Hmisc) #CORREGIDO_MTOMAS
   d.colnames = c("YEAR", "MES", "DIA", unique(as.character(datos[, "INDICATIVO"])))
   datos[, "MES"] = as.character(datos[, "MES"])
   dates = apply(datos[, c("MES", "YEAR")], c(1), paste, collapse = " ")
@@ -1616,7 +1614,6 @@ poca_variacion_bucle <- function(x_07,
                     3)
 
   for (i in 4:ncol(x_07)) {
-    print(i)
     ## preparamos los datos
     dat_1 <- x_07[, c(1, 2, 3, i)]
     dat_2 <- x_13[, c(1, 2, 3, i)]
@@ -2239,7 +2236,7 @@ special_character <- function(data, bucle = T, TS = 'D') {
       data[ac, ] <- apply(
         data[ac],
         1,
-        FUN = function(z) {
+        FUN = function(z) {s
           w <- which(z == -4)
           z[w] <- NA
           z[(w + 1)] <- NA

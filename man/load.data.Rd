@@ -4,7 +4,7 @@
 \alias{load.data}
 \title{Load data from a file in a specified directory}
 \usage{
-load.data(file, dataOutFiles)
+load.data(file)
 }
 \arguments{
 \item{file}{Name of the file to load data from}
