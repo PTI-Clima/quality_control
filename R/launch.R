@@ -162,10 +162,15 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   
   # Variables pre-proccessing ##################################################
   
+<<<<<<< Updated upstream
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "out_files")
   } else {
     dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
+=======
+  if (!exists(C_AEMET)){
+    init.variables("new_all", "AEMET")
+>>>>>>> Stashed changes
   }
   
   data_source <<- data.source
@@ -221,12 +226,16 @@ launch.all.controls <- function() {
 #'
 #' This function applies quality controls to the specified variables.
 #'
+<<<<<<< Updated upstream
 #' @param vars A character vector containing the variable names to apply quality controls to.
 #' @export
 #' 
 launch.controls <- function(vars) {
   
   route.filesR = "code"
+=======
+init.variables <- function(output.folder, data.source = "AEMET") {
+>>>>>>> Stashed changes
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -254,6 +263,46 @@ launch.controls <- function(vars) {
   
   dataFiles <<- "data"
   
+<<<<<<< Updated upstream
+=======
+  if (data.source == "AEMET") {
+    dataOutFiles <<- file.path(output.folder, "out_files")
+  } else {
+    dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
+  }
+  
+}
+
+#' Launch all quality controls
+#'
+#' This function launches all quality controls for the variables: wind speed, relative humidity,
+#' precipitation, sunshine duration, radiation and temperature.
+#' 
+#' @return No return value.
+#' @export
+launch.all.controls <- function() {
+  
+  init.variables("new_all", "AEMET")
+  
+  vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
+  
+  qc.apply(vars)
+  
+}
+
+
+#' Apply quality controls to specified variables.
+#'
+#' This function applies quality controls to the specified variables.
+#'
+#' @param vars A character vector containing the variable names to apply quality controls to.
+#' @export
+#' 
+launch.controls <- function(vars) {
+  
+  init.variables("new_all", "AEMET")
+  
+>>>>>>> Stashed changes
   qc.apply(vars)
   
 }

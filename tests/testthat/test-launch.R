@@ -1,4 +1,3 @@
-dataOutFiles = getwd()
 library(testthat)
 
 # -------- year.new.dir.calc ------------ #
@@ -32,12 +31,13 @@ test_that("if nchar(year.new) is > 4, year.new.dir = new_all", {
 #   expect_equal(x, NA)
 # })
 
-# ---------- Save Data Function ----------- #
+# ---------- Save Data ----------- #
 test_that("the save.data function is able to save objects and files correctly",{
+  init.variables("new_all")
   set.seed(123)
-  x = rnorm(10)
+  x <- rnorm(10)
   save.data(x,file ="save_data.RData") 
-  y = load("save_data.RData")
+  y <- load(paste(dataOutFiles, sep = "", "/save_data.RData"))
   expect_equal("x",y)
 })
 
@@ -45,10 +45,11 @@ test_that("the save.data function is able to save objects and files correctly",{
 # ------- Load data --------- #
 
 test_that("the load.data function is able to load objects and files correctly",{
+  init.variables("new_all")
   set.seed(123)
-  x = rnorm(10)
-  save(x,file ="save_data2.RData")
-  y = load.data("save_data2.RData", dataOutFiles = dataOutFiles)
+  x <- rnorm(10)
+  save(x,file = paste(dataOutFiles, sep = "", "/save_data2.RData"))
+  y <- load.data("save_data2.RData")
   expect_equal("x",y)
 })
 
