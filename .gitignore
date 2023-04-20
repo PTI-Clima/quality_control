@@ -47,3 +47,10 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Ficheros R compilados
+*.Rc
+
+# Ficheros Alex
+code/
+hum_muestra_controles_internos.csv
