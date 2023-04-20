@@ -1,9 +1,5 @@
 # Primera versión del fichero de funciones
 
-# suppressPackageStartupMessages(library(Rcpp))
-# suppressPackageStartupMessages(library(compiler))
-# suppressPackageStartupMessages(library(R6))
-
 #' Calculate the directory name for a given year or day value
 #'
 #' This function calculates the directory name for a given year or day value. If the value
@@ -154,11 +150,11 @@ prepare.data <- function(name.type, dataOutFiles) {
 #' @export
 qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", data.source = "AEMET") {
   
-  # Parameters check ###########################################################
-  
-  
-  
   # Variables pre-proccessing ##################################################
+  
+  if (!exists(C_AEMET)){
+    init.variables()
+  }
   
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "out_files")
@@ -168,19 +164,13 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   
   data_source <<- data.source
 
-  # Compilar c++ ###############################################################
-
-  # if (!exists("main_deteccion_duplicados")) {
-  #   sourceCpp(file.path("src", "simple.cpp"))
-  # }
-
-  # Launch mtomas code##########################################################
+  # Launch mtomas code #########################################################
 
   for (type in vars) {
     
     print(paste0("Launching control for: ", type))
 
-    controles(type)
+    controles(type) # this line actually launches the code
 
     if (type == "t") {
       prepare.data(name.type = "tmax", dataOutFiles)
@@ -193,6 +183,41 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   
 }
 
+#' init.variables
+#'
+#' This function initialize the necessary global variables to execute the
+#' quality control code itself.
+#'
+#' @return None
+#'
+init.variables <- function() {
+  
+  C_TMAX <<- "tmax" #temperatura máxima
+  C_TMIN <<- "tmin" #temperatura mínima
+  C_W <<- "w" #velocidad viento
+  C_HR <<- "hr" #humedad relativa
+  C_PR <<- "pr" #precipitación
+  C_IN <<- "in" #insolación
+  C_TD <<- "td" #temperatura de rocío
+  C_RA <<- "ra" #radiacion
+  C_P <<- "p" #presion
+  
+  C_T <<- "t"  #temperatura
+  C_R <<- "r" #radiación
+  C_MAX <<- "max" #temperatura máxima
+  C_MIN <<- "min" #temperatura mínima
+  C_INS <<- "ins" #insolación
+  C_PP <<- "pp" #precipitación
+  
+  DS_ALL <<- "all"
+  DS_TRI <<- "tri"
+  
+  C_AEMET <<- "AEMET"
+  C_SIAR <<- "SIAR"
+  
+  dataFiles <<- "data"
+  
+}
 
 #' Launch all quality controls
 #'
@@ -203,12 +228,7 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
 #' @export
 launch.all.controls <- function() {
   
-  C_W <<- "w" #velocidad viento
-  C_HR <<- "hr" #humedad relativa
-  C_PR <<- "pr" #precipitación
-  C_IN <<- "in" #insolación
-  C_R <<- "r" #radiación
-  C_T <<- "t"  #temperatura
+  init.variables()
   
   vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
   
@@ -226,33 +246,7 @@ launch.all.controls <- function() {
 #' 
 launch.controls <- function(vars) {
   
-  route.filesR = "code"
-  
-  C_TMAX <<- "tmax" #temperatura máxima
-  C_TMIN <<- "tmin" #temperatura mínima
-  C_W <<- "w" #velocidad viento
-  C_HR <<- "hr" #humedad relativa
-  C_PR <<- "pr" #precipitación
-  C_IN <<- "in" #insolación
-  C_TD <<- "td" #temperatura de rocío
-  C_RA <<- "ra" #radiacion
-  C_P <<- "p" #presion
-  
-  # Otros nombres, por código asimilado de mtomas
-  C_T <<- "t"  #temperatura
-  C_R <<- "r" #radiación
-  C_MAX <<- "max" #temperatura máxima
-  C_MIN <<- "min" #temperatura mínima
-  C_INS <<- "ins" #insolación
-  C_PP <<- "pp" #precipitación
-  
-  DS_ALL <<- "all"
-  DS_TRI <<- "tri"
-  
-  C_AEMET <<- "AEMET"
-  C_SIAR <<- "SIAR"
-  
-  dataFiles <<- "data"
+  init.variables()
   
   qc.apply(vars)
   

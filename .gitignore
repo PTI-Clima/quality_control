@@ -52,3 +52,5 @@ data/
 AEMET/
 new_all/
 new_all_muestra/
+*.Rproj
+*.pper

@@ -32,7 +32,7 @@
 #' @examples
 delete_na = function(data) {
   data.na = !is.na(data[-c(1:3)]) & data[-c(1:3)] != -999
-  data.sum = apply(data.na, c(1), sumf, na.rm = TRUE)
+  data.sum = apply(data.na, c(1), sum, na.rm = TRUE)
   data.0 = data.sum > 0
   data = data[data.0,]
   return(data)
@@ -375,8 +375,6 @@ lectura_datos_aemet <- function(a, var) {
         encoding = 'latin1',
         quote = ''
       )[, w]
-      h <- head(dat)
-      print(h)
 
       if ("DIA" %in% colnames(dat)) {
         dat = dat[!duplicated(dat[, c("INDICATIVO", "AÑO", "MES", "DIA")], fromLast =
@@ -575,7 +573,6 @@ distancias <- function(a, var, data_source = C_AEMET) {
     ## Leemos los datos
     f <- files[1]
     for (f in files) {
-      print(f)
       dat <- read.table(
         paste(f, sep = ""),
         sep = ";",
@@ -597,7 +594,6 @@ distancias <- function(a, var, data_source = C_AEMET) {
   save.data(coords, file = paste('coords_', var, '.RData', sep = ''))
 
   d <- DF[, c('C_X', 'C_Y')]
-  print(DF)
   distancia <- dist(d)
   distancia <- as.data.frame(as.matrix(distancia))
   rownames(distancia) <- colnames(distancia) <- DF$INDICATIVO
