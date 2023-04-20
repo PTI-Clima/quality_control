@@ -33,7 +33,7 @@ test_that("if nchar(year.new) is > 4, year.new.dir = new_all", {
 
 # ---------- Save Data ----------- #
 test_that("the save.data function is able to save objects and files correctly",{
-  init.variables("new_all")
+  init.variables()
   set.seed(123)
   x <- rnorm(10)
   save.data(x,file ="save_data.RData") 
@@ -45,7 +45,7 @@ test_that("the save.data function is able to save objects and files correctly",{
 # ------- Load data --------- #
 
 test_that("the load.data function is able to load objects and files correctly",{
-  init.variables("new_all")
+  init.variables()
   set.seed(123)
   x <- rnorm(10)
   save(x,file = paste(dataOutFiles, sep = "", "/save_data2.RData"))
