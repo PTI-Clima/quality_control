@@ -1,9 +1,5 @@
 # Primera versión del fichero de funciones
 
-suppressPackageStartupMessages(library(Rcpp))
-suppressPackageStartupMessages(library(compiler))
-suppressPackageStartupMessages(library(R6))
-
 #' Calculate the directory name for a given year or day value
 #'
 #' This function calculates the directory name for a given year or day value. If the value
@@ -48,7 +44,6 @@ year.new.dir.calc = function(year.new) {
 #'
 #' @return None
 #'
-#' @import chron
 #' @importFrom lattice xyplot
 #'
 prepare.data <- function(name.type, dataOutFiles) {
@@ -151,17 +146,14 @@ prepare.data <- function(name.type, dataOutFiles) {
 #' @param data.source Character string indicating the data source (default is "AEMET")
 #'
 #' @return None
-#' @importFrom Rcpp sourceCpp
+#' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc
 #'
 #' @export
 qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", data.source = "AEMET") {
   
-  # Parameters check ###########################################################
-  
-  
-  
   # Variables pre-proccessing ##################################################
   
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "out_files")
@@ -171,21 +163,21 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   if (!exists(C_AEMET)){
     init.variables("new_all", "AEMET")
 >>>>>>> Stashed changes
+=======
+  if (!exists(C_AEMET)){
+    init.variables("AEMET")
+>>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   }
   
   data_source <<- data.source
 
-  # Compilar c++ ###############################################################
-
-  # if (!exists("main_deteccion_duplicados")) {
-  #   sourceCpp(file.path("src", "simple.cpp"))
-  # }
-
-  # Launch mtomas code##########################################################
+  # Launch mtomas code #########################################################
 
   for (type in vars) {
+    
+    print(paste0("Launching control for: ", type))
 
-    controles(type)
+    controles(type) # this line actually launches the code
 
     if (type == "t") {
       prepare.data(name.type = "tmax", dataOutFiles)
@@ -198,34 +190,14 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   
 }
 
-
-#' Launch all quality controls
+#' init.variables
 #'
-#' This function launches all quality controls for the variables: wind speed, relative humidity,
-#' precipitation, sunshine duration, radiation and temperature.
-#' 
-#' @return No return value.
-#' @export
-launch.all.controls <- function() {
-  
-  C_W <<- "w" #velocidad viento
-  C_HR <<- "hr" #humedad relativa
-  C_PR <<- "pr" #precipitación
-  C_IN <<- "in" #insolación
-  C_R <<- "r" #radiación
-  C_T <<- "t"  #temperatura
-  
-  vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
-  
-  qc.apply(vars)
-  
-}
-
-
-#' Apply quality controls to specified variables.
+#' This function initialize the necessary global variables to execute the
+#' quality control code itself.
 #'
-#' This function applies quality controls to the specified variables.
+#' @return None
 #'
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 #' @param vars A character vector containing the variable names to apply quality controls to.
 #' @export
@@ -236,6 +208,9 @@ launch.controls <- function(vars) {
 =======
 init.variables <- function(output.folder, data.source = "AEMET") {
 >>>>>>> Stashed changes
+=======
+init.variables <- function(data.source = "AEMET") {
+>>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -247,7 +222,6 @@ init.variables <- function(output.folder, data.source = "AEMET") {
   C_RA <<- "ra" #radiacion
   C_P <<- "p" #presion
   
-  # Otros nombres, por código asimilado de mtomas
   C_T <<- "t"  #temperatura
   C_R <<- "r" #radiación
   C_MAX <<- "max" #temperatura máxima
@@ -263,8 +237,11 @@ init.variables <- function(output.folder, data.source = "AEMET") {
   
   dataFiles <<- "data"
   
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "out_files")
   } else {
@@ -282,7 +259,11 @@ init.variables <- function(output.folder, data.source = "AEMET") {
 #' @export
 launch.all.controls <- function() {
   
+<<<<<<< HEAD
   init.variables("new_all", "AEMET")
+=======
+  init.variables("AEMET")
+>>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   
   vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
   
@@ -300,9 +281,14 @@ launch.all.controls <- function() {
 #' 
 launch.controls <- function(vars) {
   
+<<<<<<< HEAD
   init.variables("new_all", "AEMET")
   
 >>>>>>> Stashed changes
+=======
+  init.variables("AEMET")
+  
+>>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   qc.apply(vars)
   
 }
@@ -333,8 +319,9 @@ save.data = function(..., file) {
 #'
 #' @return Objects loaded from the file
 #'
-load.data = function(file, dataOutFiles) {
+load.data = function(file) {
   newUrl = file.path(dataOutFiles, file)
   envir = parent.frame()
   load(newUrl, envir = envir)
 }
+
