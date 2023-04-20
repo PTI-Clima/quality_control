@@ -49,7 +49,7 @@ year.new.dir.calc = function(year.new) {
 prepare.data <- function(name.type, dataOutFiles) {
   # Nombre del fichero que guarda las coordenadas coords_NAMES5.RData (función distancias de Funciones_QC.R)
   # C_W <- "w" #velocidad viento
-  # C_HR <- "hr" #humedad relativa
+   C_HR <- "hr" #humedad relativa
   # C_PR <- "pr" #precipitación
   # C_IN <- "in" #insolación
   # C_R <- "r" #radiación
@@ -58,18 +58,19 @@ prepare.data <- function(name.type, dataOutFiles) {
   # C_TMIN <- "tmin"
   
   NAMES5 = c()
-  NAMES5[C_TMAX] = C_T
-  NAMES5[C_TMIN] = C_T
-  NAMES5[C_HR] = C_HR
-  NAMES5[C_W] = C_W
-  NAMES5[C_IN] = C_IN
-  NAMES5[C_PR] = C_PR
-  NAMES5[C_R] = C_R #radiacion
-  NAMES5[C_PR] = C_P #presion
-  NAMES5[C_R] = C_RA
+#  NAMES5[C_TMAX] = C_T
+#  NAMES5[C_TMIN] = C_T
+   NAMES5[C_HR] = C_HR
+#  NAMES5[C_W] = C_W
+#  NAMES5[C_IN] = C_IN
+#  NAMES5[C_PR] = C_PR
+#  NAMES5[C_R] = C_R #radiacion
+#  NAMES5[C_PR] = C_P #presion
+#  NAMES5[C_R] = C_RA
   
   
   fileOk = file.path(dataOutFiles, paste0(name.type, "_ok.rds"))
+# rm(fileOk)
   if(!file.exists(fileOk)){
     return(NA)
   }
