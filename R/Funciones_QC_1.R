@@ -238,6 +238,8 @@ controles = function(var) {
   #################################################
   ################# LECTURA #######################
   #################################################
+  
+  print('Reading data...')
 
   ## leemos los datos de los txt de AEMET
   min_max <-
@@ -253,11 +255,15 @@ controles = function(var) {
       list(min = list(value = min_max$min),
            max = list(value = min_max$max))
   }
+  
+  print("Creating distances file...")
 
   ## creamos el archivo de distancias.
   dist <- distancias(a = dataFiles,
                      var = var,
                      data_source = data_source)
+  
+  print("Executing quality control...")
 
   if (var == C_T) {
     min_max$min <- contol_temp1(min=min_max$min$value, dist=dist, namevar=C_MIN)
@@ -317,4 +323,6 @@ controles = function(var) {
     contol_ra(Ra=min_max$value, metadatos_originales_ra=min_max$metadatos)
     metadata_ra()
   }
+  
+  print(paste0("Finished controls for: ", var))
 }

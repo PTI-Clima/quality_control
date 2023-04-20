@@ -48,6 +48,13 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+data/
+AEMET/
+new_all/
+new_all_muestra/
+*.Rproj
+*.pper
+
 # Ficheros R compilados
 *.Rc
 
