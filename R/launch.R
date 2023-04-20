@@ -153,13 +153,7 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
   # Variables pre-proccessing ##################################################
   
   if (!exists(C_AEMET)){
-    init.variables()
-  }
-  
-  if (data.source == "AEMET") {
-    dataOutFiles <<- file.path(output.folder, "out_files")
-  } else {
-    dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
+    init.variables("AEMET")
   }
   
   data_source <<- data.source
@@ -190,7 +184,7 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
 #'
 #' @return None
 #'
-init.variables <- function() {
+init.variables <- function(data.source = "AEMET") {
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -217,6 +211,12 @@ init.variables <- function() {
   
   dataFiles <<- "data"
   
+  if (data.source == "AEMET") {
+    dataOutFiles <<- file.path(output.folder, "out_files")
+  } else {
+    dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
+  }
+  
 }
 
 #' Launch all quality controls
@@ -228,7 +228,7 @@ init.variables <- function() {
 #' @export
 launch.all.controls <- function() {
   
-  init.variables()
+  init.variables("AEMET")
   
   vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
   
@@ -246,7 +246,7 @@ launch.all.controls <- function() {
 #' 
 launch.controls <- function(vars) {
   
-  init.variables()
+  init.variables("AEMET")
   
   qc.apply(vars)
   
@@ -283,3 +283,4 @@ load.data = function(file) {
   envir = parent.frame()
   load(newUrl, envir = envir)
 }
+
