@@ -48,29 +48,29 @@ year.new.dir.calc = function(year.new) {
 #'
 prepare.data <- function(name.type, dataOutFiles) {
   # Nombre del fichero que guarda las coordenadas coords_NAMES5.RData (función distancias de Funciones_QC.R)
-  # C_W <- "w" #velocidad viento
+   C_W <- "w" #velocidad viento
    C_HR <- "hr" #humedad relativa
-  # C_PR <- "pr" #precipitación
-  # C_IN <- "in" #insolación
-  # C_R <- "r" #radiación
-  # C_T <- "t"  #temperatura
-  # C_TMAX <- "tmax"
-  # C_TMIN <- "tmin"
+   C_PR <- "pr" #precipitación
+   C_IN <- "in" #insolación
+   C_R <- "r" #radiación
+   C_T <- "t"  #temperatura
+   C_TMAX <- "tmax"
+   C_TMIN <- "tmin"
   
-  NAMES5 = c()
-#  NAMES5[C_TMAX] = C_T
-#  NAMES5[C_TMIN] = C_T
-   NAMES5[C_HR] = C_HR
-#  NAMES5[C_W] = C_W
-#  NAMES5[C_IN] = C_IN
-#  NAMES5[C_PR] = C_PR
-#  NAMES5[C_R] = C_R #radiacion
-#  NAMES5[C_PR] = C_P #presion
-#  NAMES5[C_R] = C_RA
+    NAMES5 = c()
+    NAMES5[C_TMAX] = C_T
+    NAMES5[C_TMIN] = C_T
+    NAMES5[C_HR] = C_HR
+    NAMES5[C_W] = C_W
+    NAMES5[C_IN] = C_IN
+    NAMES5[C_PR] = C_PR
+    NAMES5[C_R] = C_R #radiacion
+    NAMES5[C_PR] = C_P #presion
+    NAMES5[C_R] = C_RA
   
   
   fileOk = file.path(dataOutFiles, paste0(name.type, "_ok.rds"))
-# rm(fileOk)
+  # rm(fileOk)
   if(!file.exists(fileOk)){
     return(NA)
   }
@@ -149,43 +149,56 @@ prepare.data <- function(name.type, dataOutFiles) {
 #' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc
 #'
 #' @export
-qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", data.source = "AEMET") {
+qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
+ 
+  C_W <- "w" #velocidad viento
+  C_HR <- "hr" #humedad relativa
+  C_PR <- "pr" #precipitación
+  C_IN <- "in" #insolación
+  C_R <- "r" #radiación
+  C_T <- "t"  #temperatura
+  C_TMAX <- "tmax"
+  C_TMIN <- "tmin"
   
+  NAMES5 = c()
+  NAMES5[C_TMAX] = C_T
+  NAMES5[C_TMIN] = C_T
+  NAMES5[C_HR] = C_HR
+  NAMES5[C_W] = C_W
+  NAMES5[C_IN] = C_IN
+  NAMES5[C_PR] = C_PR
+  NAMES5[C_R] = C_R #radiacion
+  NAMES5[C_PR] = C_P #presion
+  NAMES5[C_R] = C_RA
+  
+  # Reject non-existing variables ##############################################
+  
+  if (!(vars %in% names(NAMES5))){
+    stop("Error: The climatological variable is not valid")
+  }
   # Variables pre-proccessing ##################################################
   
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-  if (data.source == "AEMET") {
-    dataOutFiles <<- file.path(output.folder, "out_files")
-  } else {
-    dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
-=======
-  if (!exists(C_AEMET)){
-    init.variables("new_all", "AEMET")
->>>>>>> Stashed changes
-=======
   if (!exists(C_AEMET)){
     init.variables("AEMET")
->>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   }
   
   data_source <<- data.source
-
+  
   # Launch mtomas code #########################################################
-
+  
   for (type in vars) {
     
     print(paste0("Launching control for: ", type))
-
+    
     controles(type) # this line actually launches the code
-
+    
     if (type == "t") {
       prepare.data(name.type = "tmax", dataOutFiles)
       prepare.data(name.type = "tmin", dataOutFiles)
     } else {
       prepare.data(name.type = type, dataOutFiles)
     }
-
+    
   }
   
 }
@@ -197,20 +210,7 @@ qc.apply <- function(vars, input.folder = "data", output.folder = "new_all", dat
 #'
 #' @return None
 #'
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-#' @param vars A character vector containing the variable names to apply quality controls to.
-#' @export
-#' 
-launch.controls <- function(vars) {
-  
-  route.filesR = "code"
-=======
-init.variables <- function(output.folder, data.source = "AEMET") {
->>>>>>> Stashed changes
-=======
-init.variables <- function(data.source = "AEMET") {
->>>>>>> c7e884af268083dc419c44869721c9f223ba331d
+init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -237,11 +237,6 @@ init.variables <- function(data.source = "AEMET") {
   
   dataFiles <<- "data"
   
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "out_files")
   } else {
@@ -259,11 +254,7 @@ init.variables <- function(data.source = "AEMET") {
 #' @export
 launch.all.controls <- function() {
   
-<<<<<<< HEAD
-  init.variables("new_all", "AEMET")
-=======
   init.variables("AEMET")
->>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   
   vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
   
@@ -281,14 +272,8 @@ launch.all.controls <- function() {
 #' 
 launch.controls <- function(vars) {
   
-<<<<<<< HEAD
-  init.variables("new_all", "AEMET")
-  
->>>>>>> Stashed changes
-=======
   init.variables("AEMET")
   
->>>>>>> c7e884af268083dc419c44869721c9f223ba331d
   qc.apply(vars)
   
 }
@@ -323,5 +308,45 @@ load.data = function(file) {
   newUrl = file.path(dataOutFiles, file)
   envir = parent.frame()
   load(newUrl, envir = envir)
+}
+
+#' Correct units of a weather series
+#'
+#' This function corrects the units of a weather series based on its type.
+#'
+#' @param series a numeric vector containing the values of the weather series to be corrected
+#' @param type a character string indicating the type of weather series, which can be one of "w" (wind speed), "hr" (relative humidity), "pr" (precipitation), "in" (insolation), "r" (radiation), "t" (temperature)
+#' 
+#' @return a numeric vector with the corrected values of the input series
+#'
+
+correctUnits = function(series, type) {
+  
+  NAMES5 = c()
+  NAMES5[C_TMAX] = C_T
+  NAMES5[C_TMIN] = C_T
+  NAMES5[C_HR] = C_HR
+  NAMES5[C_W] = C_W
+  NAMES5[C_IN] = C_IN
+  NAMES5[C_PR] = C_PR
+  NAMES5[C_R] = C_R #radiacion
+  NAMES5[C_PR] = C_P #presion
+  NAMES5[C_R] = C_RA
+  
+  if (!(type %in% names(NAMES5))){
+    stop("Error: The climatological variable is not valid")
+  }
+  else if (all(is.na(series)) == TRUE) {
+    return(NA)
+  }
+  else if (type == C_W){
+    #Entrada en km/h a la altura de 10 y salida en m/s a la altura de 2 metros
+    series <- 0.75 * ((series * 1000) / 3600)
+    # series <- series/10
+  }
+  else {
+    series <- series / 10
+  }
+  return(series)
 }
 
