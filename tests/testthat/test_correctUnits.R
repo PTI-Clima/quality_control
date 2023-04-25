@@ -11,8 +11,8 @@ series_t <- sample(50:336, 10, replace = T)
 test_that("the function throws an error when it does not recognize one of the variables", {
   init.variables()
   type = "C_Prueba"
-  expect_error(correctUnits(series_w, "prueba"),
-               "Error: The climatological variable is not valid")
+  expect_error(correctUnits(series_w, type),
+               "Error: The Climatological variable is not valid")
 })
 
 test_that("if the input variable is the insolation or the precipitation, 
@@ -38,6 +38,22 @@ test_that("if the input variable is the maximum or the minimum temperature,
             a = series_t/10
             expect_equal(a, correctUnits(series_t, "tmax"))
 })
+
+test_that("if the input variable is the relative humidity, the function 
+          does nothing", {
+            init.variables()
+            type = "hr"
+            a = series_w
+            expect_equal(a, correctUnits(series_w, "hr"))
+          })
+
+test_that("if the input variable is the radiation, the function 
+          does nothing", {
+            init.variables()
+            type = "r"
+            a = series_w
+            expect_equal(a, correctUnits(series_w, "r"))
+          })
 
 test_that("the function returns an object of type double", {
   init.variables()

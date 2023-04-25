@@ -319,9 +319,7 @@ load.data = function(file) {
 #' 
 #' @return a numeric vector with the corrected values of the input series
 #'
-
-correctUnits = function(series, type) {
-  
+correctUnits = function(series,type){
   NAMES5 = c()
   NAMES5[C_TMAX] = C_T
   NAMES5[C_TMIN] = C_T
@@ -329,24 +327,23 @@ correctUnits = function(series, type) {
   NAMES5[C_W] = C_W
   NAMES5[C_IN] = C_IN
   NAMES5[C_PR] = C_PR
-  NAMES5[C_R] = C_R #radiacion
-  NAMES5[C_PR] = C_P #presion
+  NAMES5[C_R] = C_R # radiacion
+  NAMES5[C_PR] = C_P # presion
   NAMES5[C_R] = C_RA
   
   if (!(type %in% names(NAMES5))){
-    stop("Error: The climatological variable is not valid")
+    stop("Error: The Climatological variable is not valid")
   }
-  else if (all(is.na(series)) == TRUE) {
+  else if (all(is.na(series)) == TRUE){
     return(NA)
   }
-  else if (type == C_W){
-    #Entrada en km/h a la altura de 10 y salida en m/s a la altura de 2 metros
-    series <- 0.75 * ((series * 1000) / 3600)
-    # series <- series/10
-  }
-  else {
+  else if (type == C_IN | type == C_PR |
+           type == C_MIN | type == C_TMAX){
     series <- series / 10
+  }
+  else if (type == C_W){
+    series <- 0.75 * ((series * 1000) / 3600)
+    # series <- series / 10
   }
   return(series)
 }
-
