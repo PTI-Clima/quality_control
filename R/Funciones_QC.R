@@ -428,7 +428,6 @@ lectura_datos_aemet <- function(a, var) {
     }
     return(DF)
   }
-
   ## Leemos los datos de insolacion
   if (var == C_INS | var == C_RA) {
     for (f in files) {
@@ -440,7 +439,7 @@ lectura_datos_aemet <- function(a, var) {
           encoding = 'latin1',
           quote = ''
         )[, w]
-
+      
       dat = dat[!duplicated(dat[, c("INDICATIVO", "AÑO", "MES", "DIA")], fromLast =
                               FALSE),]
 
@@ -569,6 +568,7 @@ distancias <- function(a, var, data_source = C_AEMET) {
     files <- files[!grepl("Descripcion", files)]
     
     DF <- NULL
+    
 
     ## Leemos los datos
     f <- files[1]
@@ -951,7 +951,7 @@ deteccion_duplicados_25_dias <-
     eq = main_deteccion_duplicados(cpp.bin, th_min, th_max, ncol)
     eq = strsplit(eq, ";")[[1]]
     e = 1
-    for (e in seqf(1, length(eq))) {
+    for (e in seq(1, length(eq))) {
       equal = strsplit(eq[[e]], "=")[[1]]
       dupl[e, 1] = as.numeric(rownames.calc[1 + as.numeric(equal[1])])
       equal = strsplit(equal[2], ",")[[1]]
@@ -2092,7 +2092,7 @@ cien_entre_nas <- function(data,
     a[is.na(a)] <- (-10)
     xx <- rle(a)
     ww <- which(xx$values == (-10) & xx$length > A)
-    for (i in seqf(1, length(ww))) {
+    for (i in seq(1, length(ww))) {
       if (ww[i] > 1 & ww[i] < length(xx$value)) {
         if (xx$values[(ww[i] + 1)] == 100 & xx$length[(ww[i] + 1)] > B) {
           ## ubicamos la cadena de 100

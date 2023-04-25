@@ -669,7 +669,7 @@ tratamiento_unicos_25 <- function(x, s, b, d) {
   n = 31
 
   # En cada posicion de la lista 's' guardamos los meses duplicados
-  for (i in seqf(1, length(s))) {
+  for (i in seq(1, length(s))) {
     y <- s[[i]]
     y <- y[c(order(y$YEAR, y$MES)), ]
     
@@ -687,7 +687,7 @@ tratamiento_unicos_25 <- function(x, s, b, d) {
       # Si pertenecen a distintas estaciones
       conservar <- vector(mode = 'logical', length = dim(y)[1])
       
-      for (k in seqf(1, (dim(s[[i]])[1] - 1))) {
+      for (k in seq(1, (dim(s[[i]])[1] - 1))) {
         for (l in (k + 1):dim(s[[i]])[1]) {
           if (y[k, 'INDICATIVO'] == y[l, 'INDICATIVO']) {
             b[c(which(b$YEAR == y[k, 'YEAR'] & b$MES == y[k, 'MES'] &
@@ -739,7 +739,7 @@ tratamiento_unicos_25 <- function(x, s, b, d) {
         }
       }
       
-      for (k in seqf(1, (dim(s[[i]])[1]))) {
+      for (k in seq(1, (dim(s[[i]])[1]))) {
         if (!conservar[k]) {
           b[c(which(b$YEAR == y[k, 'YEAR'] & b$MES == y[k, 'MES'] &
                       b$INDICATIVO == y[k, 'INDICATIVO'])), 4:ncol(b)] <-
