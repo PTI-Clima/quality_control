@@ -1,3 +1,5 @@
+library(testthat)
+
 # -------- year.new.dir.calc ------------ #
 
 test_that("if year.new is NA, the function returns new_all", {
@@ -29,12 +31,25 @@ test_that("if nchar(year.new) is > 4, year.new.dir = new_all", {
 #   expect_equal(x, NA)
 # })
 
+# ---------- Save Data ----------- #
+test_that("the save.data function is able to save objects and files correctly",{
+  init.variables()
+  set.seed(123)
+  x <- rnorm(10)
+  save.data(x,file ="save_data.RData") 
+  y <- load(paste(dataOutFiles, sep = "", "/save_data.RData"))
+  expect_equal("x",y)
+})
+
+
 # ------- Load data --------- #
 
 test_that("the load.data function is able to load objects and files correctly",{
-  x = rnorm(10)
-  save(x,file ="save_data.RData")
-  y = load.data("save_data.RData", "C:/Users/SERGIO/Documents/Github/quality_control")
+  init.variables()
+  set.seed(123)
+  x <- rnorm(10)
+  save(x,file = paste(dataOutFiles, sep = "", "/save_data2.RData"))
+  y <- load.data("save_data2.RData")
   expect_equal("x",y)
 })
 

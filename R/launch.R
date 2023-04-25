@@ -69,7 +69,6 @@ prepare.data <- function(name.type) {
   }
   
   fileOk = file.path(dataOutFiles, paste0(name.type, "_ok.rds"))
-  print(fileOk)
   if(!file.exists(fileOk)){
     return(NA)
   }
@@ -159,6 +158,22 @@ qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
     stop(paste0('Error: The following climatological variable is not valid: ', vars))
   }
   
+  NAMES5 = c()
+  NAMES5[C_TMAX] = C_T
+  NAMES5[C_TMIN] = C_T
+  NAMES5[C_HR] = C_HR
+  NAMES5[C_W] = C_W
+  NAMES5[C_IN] = C_IN
+  NAMES5[C_PR] = C_PR
+  NAMES5[C_R] = C_R #radiacion
+  NAMES5[C_PR] = C_P #presion
+  NAMES5[C_R] = C_RA
+  
+  # Reject non-existing variables ##############################################
+  
+  if (!(vars %in% names(NAMES5))){
+    stop("Error: The climatological variable is not valid")
+  }
   # Variables pre-proccessing ##################################################
   
   if (!exists(C_AEMET)){
@@ -166,22 +181,22 @@ qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
   }
   
   data_source <<- data.source
-
+  
   # Launch mtomas code #########################################################
-
+  
   for (type in vars) {
     
     print(paste0("Launching control for: ", type))
-
+    
     controles(type) # this line actually launches the code
-
+    
     if (type == "t") {
       prepare.data(name.type = "tmax")
       prepare.data(name.type = "tmin")
     } else {
       prepare.data(name.type = type)
     }
-
+    
   }
   
 }
@@ -314,6 +329,7 @@ correctUnits = function(series,type){
   NAMES5[C_R] = C_R # radiacion
   NAMES5[C_PR] = C_P # presion
   NAMES5[C_R] = C_RA
+  
   if (!(type %in% names(NAMES5))){
     stop("Error: The Climatological variable is not valid")
   }
