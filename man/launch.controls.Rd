@@ -4,7 +4,7 @@
 \alias{launch.controls}
 \title{Apply quality controls to specified variables.}
 \usage{
-launch.controls(vars)
+launch.controls(vars, data.source = "AEMET")
 }
 \arguments{
 \item{vars}{A character vector containing the variable names to apply quality controls to.}

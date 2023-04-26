@@ -64,7 +64,7 @@ prepare.data <- function(name.type) {
     stop('Error: The climatological variable cannot be null')
   }
   
-  if (!name.type %in% c(C_W, C_HR, C_PR, C_IN, C_R, C_T)) {
+  if (!name.type %in% c(C_W, C_HR, C_PR, C_IN, C_R, C_TMAX, C_TMIN)) {
     stop(paste0('Error: The following climatological variable is not valid: ', name.type))
   }
   
@@ -158,22 +158,6 @@ qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
     stop(paste0('Error: The following climatological variable is not valid: ', vars))
   }
   
-  NAMES5 = c()
-  NAMES5[C_TMAX] = C_T
-  NAMES5[C_TMIN] = C_T
-  NAMES5[C_HR] = C_HR
-  NAMES5[C_W] = C_W
-  NAMES5[C_IN] = C_IN
-  NAMES5[C_PR] = C_PR
-  NAMES5[C_R] = C_R #radiacion
-  NAMES5[C_PR] = C_P #presion
-  NAMES5[C_R] = C_RA
-  
-  # Reject non-existing variables ##############################################
-  
-  if (!(vars %in% names(NAMES5))){
-    stop("Error: The climatological variable is not valid")
-  }
   # Variables pre-proccessing ##################################################
   
   if (!exists(C_AEMET)){
@@ -207,6 +191,8 @@ qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
 #' quality control code itself.
 #'
 #' @return None
+#' 
+#' @noRd
 #'
 init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
   
@@ -250,14 +236,14 @@ init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
 #' 
 #' @return No return value.
 #' @export
-launch.all.controls <- function() {
+launch.all.controls <- function(data.source = 'AEMET') {
   
-  init.variables("AEMET")
+  init.variables(data.source = data.source)
   
   #vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
   vars = c(C_IN, C_R, C_T)
   
-  qc.apply(vars)
+  qc.apply(vars, data.source = data.source)
   
 }
 
@@ -269,11 +255,11 @@ launch.all.controls <- function() {
 #' @param vars A character vector containing the variable names to apply quality controls to.
 #' @export
 #' 
-launch.controls <- function(vars) {
+launch.controls <- function(vars, data.source = 'AEMET') {
   
-  init.variables("AEMET")
+  init.variables(data.source = data.source)
   
-  qc.apply(vars)
+  qc.apply(vars, data.source = data.source)
   
 }
 
@@ -329,7 +315,6 @@ correctUnits = function(series,type){
   NAMES5[C_R] = C_R # radiacion
   NAMES5[C_PR] = C_P # presion
   NAMES5[C_R] = C_RA
-  
   if (!(type %in% names(NAMES5))){
     stop("Error: The Climatological variable is not valid")
   }

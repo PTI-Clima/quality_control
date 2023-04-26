@@ -4,7 +4,7 @@
 \alias{launch.all.controls}
 \title{Launch all quality controls}
 \usage{
-launch.all.controls()
+launch.all.controls(data.source = "AEMET")
 }
 \value{
 No return value.

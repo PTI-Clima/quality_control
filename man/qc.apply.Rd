@@ -4,21 +4,16 @@
 \alias{qc.apply}
 \title{qc.apply}
 \usage{
-qc.apply(
-  vars,
-  input.folder = "data",
-  output.folder = "new_all",
-  data.source = "AEMET"
-)
+qc.apply(vars, output.folder = "new_all", data.source = "AEMET")
 }
 \arguments{
 \item{vars}{Character vector of variable types to apply QC to}
 
-\item{input.folder}{Character string of the input data folder path}
-
 \item{output.folder}{Character string of the output data folder path}
 
 \item{data.source}{Character string indicating the data source (default is "AEMET")}
+
+\item{input.folder}{Character string of the input data folder path}
 }
 \value{
 None
