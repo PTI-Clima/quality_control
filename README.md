@@ -78,7 +78,7 @@ Asociación Española de Climatología, 2016, p. 407-415
 ## Not run:
 
 # Create the data
-INDICATIVO <- rep(B013X, 200)
+INDICATIVO <- rep("B013X", 200)
 AÑO <- rep(2023, 200)
 MES <- sample(1:12, size = 200, replace = T)
 DIA <- sample(1:28, size = 200, replace = T)
