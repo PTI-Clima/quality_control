@@ -4,7 +4,7 @@
 \alias{prepare.data}
 \title{Prepare data for analysis}
 \usage{
-prepare.data(name.type, dataOutFiles)
+prepare.data(name.type)
 }
 \arguments{
 \item{name.type}{character string indicating the type of data to prepare}
