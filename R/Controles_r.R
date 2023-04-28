@@ -23,7 +23,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 contol_ra <- function(Ra, metadatos_originales_ra) {
   ###########################################################
   ########### REFORMATEAMOS DATOS A FORMATO ANCHO ###########
@@ -77,7 +76,6 @@ contol_ra <- function(Ra, metadatos_originales_ra) {
 #' @return None
 #' @export
 #'
-#' @examples
 metadata_ra = function() {
   rename_metadata(C_RA)
   

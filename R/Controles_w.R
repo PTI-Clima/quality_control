@@ -23,7 +23,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 contol_w <- function(U10, metadatos_originales_U10) {
   ###########################################################
   ########### REFORMATEAMOS DATOS A FORMATO ANCHO ###########
@@ -246,7 +245,6 @@ contol_w <- function(U10, metadatos_originales_U10) {
 #' @return None
 #' @export
 #'
-#' @examples
 metadata_w = function() {
   rename_metadata(C_W)
   

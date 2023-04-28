@@ -15,8 +15,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/> <http://www.gnu.org/licenses/gpl.txt/>.
 #####################################################################
 
-libraryf(reshape)
-libraryf(reshape2)
+# library(reshape)
+# library(reshape2)
 
 ##################################################################
 #### FUNCION PARA LEER LOS DATOS DE LOS ARCHIVOS TXT DE AEMET ####
@@ -32,7 +32,7 @@ libraryf(reshape2)
 #' @examples
 delete_na = function(data) {
   data.na = !is.na(data[-c(1:3)]) & data[-c(1:3)] != -999
-  data.sum = apply(data.na, c(1), sumf, na.rm = TRUE)
+  data.sum = apply(data.na, c(1), sum, na.rm = TRUE)
   data.0 = data.sum > 0
   data = data[data.0,]
   return(data)
@@ -73,112 +73,110 @@ compatibles_row_col = function(data1, data2) {
   return(data1)
 }
 
-if (!exists("lectura_datos_siar_var")) {
-  #' Lee datos del SIAR desde los ficheros de origen y los devuelve
-  #'
-  #' @param a directorio en el que están los ficheros
-  #' @param var tipo de datos (tmin, pr...)
-  #'
-  #' @return Matriz de datos
-  #' @export
-  #'
-  #' @examples
-  lectura_datos_siar_var = function(a, var) {
-    library(chron)
-    col.name = toupper(var)
-    file.name = var
-    if (var == C_RA) {
-      col.name = ""
-      file.name = C_R
-    } else{
-      if (var == C_PP) {
-        col.name = "P"
-        file.name = C_PR
+#' Lee datos del SIAR desde los ficheros de origen y los devuelve
+#'
+#' @param a directorio en el que están los ficheros
+#' @param var tipo de datos (tmin, pr...)
+#'
+#' @return Matriz de datos
+#' @export
+#'
+#' @examples
+lectura_datos_siar_var = function(a, var) {
+  # library(chron)
+  col.name = toupper(var)
+  file.name = var
+  if (var == C_RA) {
+    col.name = ""
+    file.name = C_R
+  } else{
+    if (var == C_PP) {
+      col.name = "P"
+      file.name = C_PR
+    }
+  }
+
+  if (is.na(a)) {
+    a = "files_data"
+  }
+
+  files <-
+    list.files(
+      path = a,
+      pattern = ".txt$|.csv$|.tmp$",
+      full.names = TRUE,
+      recursive = TRUE
+    )
+  files <- files[grepl(var, files)]
+  files <- files[!grepl("coor", files)]
+  files <- files[!grepl("Descripcion", files)]
+  if(length(files)>0){
+    ori.csv <- NULL
+    f <- files[1]
+    for (f in files) {
+      ori.csv.aux <- read.csv(f, sep = ";")
+      if(!C_MONTH%in%colnames(ori.csv.aux)){
+        dates <- chron(rownames(ori.csv.aux), format = c(dates = "d/m/yy", times = "h:m:s"))
+        ori.csv.aux <- cbind(as.character(chron::years(dates)), as.numeric(months(dates)), chron::days(dates), ori.csv.aux)
+        colnames(ori.csv.aux)[1:3] <- c("year", C_MONTH, C_DAY)
       }
-    }
-
-    if (is.na(a)) {
-      a = "files_data"
-    }
-
-    files <-
-      list.files(
-        path = a,
-        pattern = ".txt$|.csv$|.tmp$",
-        full.names = TRUE,
-        recursive = TRUE
-      )
-    files <- files[grepl(var, files)]
-    files <- files[!grepl("coor", files)]
-    files <- files[!grepl("Descripcion", files)]
-    if(length(files)>0){
-      ori.csv <- NULL
-      f <- files[1]
-      for (f in files) {
-        ori.csv.aux <- read.csv(f, sep = ";")
-        if(!C_MONTH%in%colnames(ori.csv.aux)){
-          dates <- chron(rownames(ori.csv.aux), format = c(dates = "d/m/yy", times = "h:m:s"))
-          ori.csv.aux <- cbind(as.character(chron::years(dates)), as.numeric(months(dates)), chron::days(dates), ori.csv.aux)
-          colnames(ori.csv.aux)[1:3] <- c("year", C_MONTH, C_DAY)
-        }
-        if (!is.null(ori.csv)) {
-          new.names <- colnames(ori.csv.aux)[!colnames(ori.csv.aux) %in% colnames(ori.csv)]
-          ori.csv[, new.names] <- NA
-          new.names <-
-            colnames(ori.csv)[!colnames(ori.csv) %in% colnames(ori.csv.aux)]
-          ori.csv.aux[, new.names] <- NA
-          ori.csv <- rbind(ori.csv, ori.csv.aux)
-        } else{
-          ori.csv <- ori.csv.aux
-        }
-        rm(ori.csv.aux)
-        gc()
-      }      
-      ori.csv = ori.csv[!duplicated(ori.csv[, c("year", C_MONTH, C_DAY)], fromLast =
-                                      TRUE),]
-
-      # http://seananderson.ca/2013/10/19/reshape.html
-      t.csv <- reshape2::melt(ori.csv, id.vars = c("year", C_MONTH, C_DAY))
-      t.csv <- cast(t.csv, variable + year + month ~ day, NULL)
-      colnames(t.csv)[colnames(t.csv)=="variable"] = "INDICATIVO"
-      colnames(t.csv)[colnames(t.csv)=="year"] = "AÑO"
-      colnames(t.csv)[colnames(t.csv)=="month"] = "MES"
-      colnames(t.csv)[4:dim(t.csv)[2]] = paste0(col.name, colnames(t.csv)[4:dim(t.csv)[2]])
-      t.csv = t.csv[, c("INDICATIVO", "AÑO", "MES", paste0(col.name, 1:31))]
-
-      if (var == C_TMIN | var == C_TMAX) {
-        #Grados - grados/10
-        t.csv[, -c(1:3)] = t.csv[, -c(1:3)] * 10
+      if (!is.null(ori.csv)) {
+        new.names <- colnames(ori.csv.aux)[!colnames(ori.csv.aux) %in% colnames(ori.csv)]
+        ori.csv[, new.names] <- NA
+        new.names <-
+          colnames(ori.csv)[!colnames(ori.csv) %in% colnames(ori.csv.aux)]
+        ori.csv.aux[, new.names] <- NA
+        ori.csv <- rbind(ori.csv, ori.csv.aux)
       } else{
-        if (var == C_W) {
-          #M/s a 2 metros - km/h a 10 metros # *3600/(0.75*1000)
-          t.csv[, -c(1:3)] = 3600 * t.csv[, -c(1:3)] / 750
+        ori.csv <- ori.csv.aux
+      }
+      rm(ori.csv.aux)
+      gc()
+    }      
+    ori.csv = ori.csv[!duplicated(ori.csv[, c("year", C_MONTH, C_DAY)], fromLast =
+                                    TRUE),]
+
+    # http://seananderson.ca/2013/10/19/reshape.html
+    t.csv <- reshape2::melt(ori.csv, id.vars = c("year", C_MONTH, C_DAY))
+    t.csv <- cast(t.csv, variable + year + month ~ day, NULL)
+    colnames(t.csv)[colnames(t.csv)=="variable"] = "INDICATIVO"
+    colnames(t.csv)[colnames(t.csv)=="year"] = "AÑO"
+    colnames(t.csv)[colnames(t.csv)=="month"] = "MES"
+    colnames(t.csv)[4:dim(t.csv)[2]] = paste0(col.name, colnames(t.csv)[4:dim(t.csv)[2]])
+    t.csv = t.csv[, c("INDICATIVO", "AÑO", "MES", paste0(col.name, 1:31))]
+
+    if (var == C_TMIN | var == C_TMAX) {
+      #Grados - grados/10
+      t.csv[, -c(1:3)] = t.csv[, -c(1:3)] * 10
+    } else{
+      if (var == C_W) {
+        #M/s a 2 metros - km/h a 10 metros # *3600/(0.75*1000)
+        t.csv[, -c(1:3)] = 3600 * t.csv[, -c(1:3)] / 750
+      } else{
+        if (var == C_PP) {
+          # var = C_PP # mm - mm/10
+          t.csv[, -c(1:3)] = t.csv[, -c(1:3)] * 10
         } else{
-          if (var == C_PP) {
-            # var = C_PP # mm - mm/10
-            t.csv[, -c(1:3)] = t.csv[, -c(1:3)] * 10
+          # var = C_RA # MJ/m2 - 10*KJ/m2
+          if (var == C_RA) {
+            t.csv[, -c(1:3)] = 100 * t.csv[, -c(1:3)]
           } else{
-            # var = C_RA # MJ/m2 - 10*KJ/m2
-            if (var == C_RA) {
-              t.csv[, -c(1:3)] = 100 * t.csv[, -c(1:3)]
-            } else{
-              if (var != C_HR) {
-                # var = C_HR # %
-                stop('Variable incorrecta')
-              }
+            if (var != C_HR) {
+              # var = C_HR # %
+              stop('Variable incorrecta')
             }
           }
         }
       }
-      # HR y W, ¿pruebas solo con datos diarios?
-      t.csv$INDICATIVO = as.factor(t.csv$INDICATIVO)
-      if (length(class(t.csv)) > 1) {
-        class(t.csv) = class(t.csv)[2]
-      }
-      return(t.csv)
     }
-    return(NA)
+    # HR y W, ¿pruebas solo con datos diarios?
+    t.csv$INDICATIVO = as.factor(t.csv$INDICATIVO)
+    if (length(class(t.csv)) > 1) {
+      class(t.csv) = class(t.csv)[2]
+    }
+    return(t.csv)
   }
+  return(NA)
 }
 
 #' Lee datos del SIAR desde los ficheros de origen y los devuelve
@@ -304,17 +302,12 @@ lectura_datos_aemet <- function(a, var) {
     )
   files <- files[grepl(var.name, files)]
   files <- files[!grepl("Descripcion", files)]
+  
+  # files <- "C:\\Users\\mgil\\Downloads\\hum_relativa22_muestra.csv"
 
   DF <- NULL
 
-  #' Añade el día 31 a la matriz de datos; si ya lo tiene no hace nada
-  #'
-  #' @param datos matriz de datos
-  #'
-  #' @return Matriz de datos
-  #' @export
-  #'
-  #' @examples
+  
   bind34 = function(datos) {
     if (dim(datos)[2] < 34) {
       datos = cbind(datos, rep(NA, dim(datos)[1]))
@@ -395,20 +388,16 @@ lectura_datos_aemet <- function(a, var) {
       dat_2 <- dat[, c(1:4, 7)]
       dat_3 <- dat[, c(1:4, 8)]
 
-      dat_0 <-
-        cast(dat_0, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_0)[5])
+      dat_0 <- cast(dat_0, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_0)[5])
       dat_0 = bind34(dat_0)
       colnames(dat_0)[4:34] <- paste(var, '00_', c(1:31), sep = '')
-      dat_1 <-
-        cast(dat_1, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_1)[5])
+      dat_1 <- cast(dat_1, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_1)[5])
       dat_1 = bind34(dat_1)
       colnames(dat_1)[4:34] <- paste(var, '07_', c(1:31), sep = '')
-      dat_2 <-
-        cast(dat_2, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_2)[5])
+      dat_2 <- cast(dat_2, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_2)[5])
       dat_2 = bind34(dat_2)
       colnames(dat_2)[4:34] <- paste(var, '13_', c(1:31), sep = '')
-      dat_3 <-
-        cast(dat_3, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_3)[5])
+      dat_3 <- cast(dat_3, INDICATIVO + AÑO + MES ~ DIA, value = colnames(dat_3)[5])
       dat_3 = bind34(dat_3)
       colnames(dat_3)[4:34] <- paste(var, '18_', c(1:31), sep = '')
 
@@ -439,7 +428,6 @@ lectura_datos_aemet <- function(a, var) {
     }
     return(DF)
   }
-
   ## Leemos los datos de insolacion
   if (var == C_INS | var == C_RA) {
     for (f in files) {
@@ -451,7 +439,7 @@ lectura_datos_aemet <- function(a, var) {
           encoding = 'latin1',
           quote = ''
         )[, w]
-
+      
       dat = dat[!duplicated(dat[, c("INDICATIVO", "AÑO", "MES", "DIA")], fromLast =
                               FALSE),]
 
@@ -470,49 +458,49 @@ lectura_datos_aemet <- function(a, var) {
 
 }
 
-if (!exists("ficheroDistanciasLeer")) {
-  #' Lee archivos de distancias y homogeneiza las coordenadas
-  #'
-  #' @return matrizde datos
-  #' @export
-  #'
-  #' @examples
-  ficheroDistanciasLeer = function() {
-    crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
+#' Lee archivos de distancias y homogeneiza las coordenadas
+#'
+#' @return matrizde datos
+#' @export
+#'
+ficheroDistanciasLeer = function() {
+  crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
+  crs30 = "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
 
-    dist1 = read.csv("files_data/28c.txt", sep = ";")[, c(1:5)]
-    dist2 = read.csv("files_data/30c.txt", sep = ";")[, c(1:5)]
+  dist1 = read.csv("files_data/28c.txt", sep = ";")[, c(1:5)]
+  dist2 = read.csv("files_data/30c.txt", sep = ";")[, c(1:5)]
 
-    est_sp1 <- dist1
-    coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
-    proj4string(est_sp1) <- crs28
-    est_sp1 <- spTransform(est_sp1, CRS(crs30))
-    dist1[, c("UTM.X", "UTM.Y")] = est_sp1@coords
-    dist = rbind(dist1, dist2)
-    dist = dist[dist[, "Base"] == C_SIAR,]
-    dist = cbind(dist, array(NA, dim = c(dim(dist)[1], 3)))
-    dist = dist[c(1, 6, 7, 2, 3, 4, 5, 8)]
-    colnames(dist) = c(
-      'INDICATIVO',
-      'NOMBRE',
-      'ALTITUD',
-      'C_X',
-      'C_Y',
-      'NOM_PROV',
-      'LONGITUD',
-      'LATITUD'
-    )
-    dist["NOM_PROV"] = NA
-    dist["LONGITUD"] = NA
+  est_sp1 <- dist1
+  sp::coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
+  sp::proj4string(est_sp1) <- crs28
+  est_sp1 <- sp::spTransform(est_sp1, sp::CRS(crs30))
+  dist1[, c("UTM.X", "UTM.Y")] = est_sp1@coords
+  dist = rbind(dist1, dist2)
+  dist = dist[dist[, "Base"] == C_SIAR,]
+  dist = cbind(dist, array(NA, dim = c(dim(dist)[1], 3)))
+  dist = dist[c(1, 6, 7, 2, 3, 4, 5, 8)]
+  colnames(dist) = c(
+    'INDICATIVO',
+    'NOMBRE',
+    'ALTITUD',
+    'C_X',
+    'C_Y',
+    'NOM_PROV',
+    'LONGITUD',
+    'LATITUD'
+  )
+  dist["NOM_PROV"] = NA
+  dist["LONGITUD"] = NA
+  
+  crslonlat <- "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs +type=crs"
 
-    est_sp <- dist
-    coordinates(est_sp) <- c('C_X', 'C_Y')
-    proj4string(est_sp) <- crs30
-    est_sp = spTransform(est_sp, CRS(crslonlat))
-    dist[, c("LONGITUD", "LATITUD")] = est_sp@coords
+  est_sp <- dist
+  sp::coordinates(est_sp) <- c('C_X', 'C_Y')
+  sp::proj4string(est_sp) <- crs30
+  est_sp = sp::spTransform(est_sp, sp::CRS(crslonlat))
+  dist[, c("LONGITUD", "LATITUD")] = est_sp@coords
 
-    return(dist)
-  }
+  return(dist)
 }
 
 #' Crea archivo de distancias
@@ -580,8 +568,9 @@ distancias <- function(a, var, data_source = C_AEMET) {
       )
     files <- files[grepl(var.name, files)]
     files <- files[!grepl("Descripcion", files)]
-
+    
     DF <- NULL
+    
 
     ## Leemos los datos
     f <- files[1]
@@ -646,8 +635,6 @@ crear_metadatos_originales <- function(datos) {
 #' @return None
 #' @export
 #'
-#' @examples
-#' datos=min; metadatos=metadatos_originales_min; var=C_MIN; pasada=1
 meses_duplicados <-
   function(datos,
            metadatos,
@@ -966,7 +953,7 @@ deteccion_duplicados_25_dias <-
     eq = main_deteccion_duplicados(cpp.bin, th_min, th_max, ncol)
     eq = strsplit(eq, ";")[[1]]
     e = 1
-    for (e in seqf(1, length(eq))) {
+    for (e in seq(1, length(eq))) {
       equal = strsplit(eq[[e]], "=")[[1]]
       dupl[e, 1] = as.numeric(rownames.calc[1 + as.numeric(equal[1])])
       equal = strsplit(equal[2], ",")[[1]]
@@ -1044,7 +1031,6 @@ n_dias_duplicados <- function(data, meta) {
   stations <- as.character(unique(data$INDICATIVO))
   sta <- 1
   for (sta in 1:length(stations)) {
-    # print(stations[sta])
     dat <- data[data$INDICATIVO == stations[sta], ]
     if (dim(dat)[1] > 1) {
       meses <- which(rowSums(dat[, 4:34] != 0) > 6)
@@ -1404,8 +1390,8 @@ agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
 #'
 #' @examples
 reformat <- function(datos) {
-  libraryf(chron)
-  libraryf(Hmisc) #CORREGIDO_MTOMAS
+  # library(chron)
+  # library(Hmisc) #CORREGIDO_MTOMAS
   d.colnames = c("YEAR", "MES", "DIA", unique(as.character(datos[, "INDICATIVO"])))
   datos[, "MES"] = as.character(datos[, "MES"])
   dates = apply(datos[, c("MES", "YEAR")], c(1), paste, collapse = " ")
@@ -1629,7 +1615,6 @@ poca_variacion_bucle <- function(x_07,
                     3)
 
   for (i in 4:ncol(x_07)) {
-    print(i)
     ## preparamos los datos
     dat_1 <- x_07[, c(1, 2, 3, i)]
     dat_2 <- x_13[, c(1, 2, 3, i)]
@@ -1999,7 +1984,6 @@ deteccion_aberrantes <- function(data, metadatos, var, vart = NULL) {
 #' @export
 #'
 #' @examples
-#' data_min=min; data_max=max; metadatos_min=metadatos_originales_min_ancho; metadatos_max=metadatos_originales_max_ancho
 min_sup_eq_max <-
   function(data_min,
            data_max,
@@ -2070,8 +2054,6 @@ daily_range <-
 #' @return matriz de datos
 #' @export
 #'
-#' @examples
-#' data=min; metadata=metadatos_min
 eliminar_datos <- function(data, metadata) {
   data = compatibles_row_col(data, metadata)
   metadata = compatibles_row_col(metadata, data)
@@ -2112,7 +2094,7 @@ cien_entre_nas <- function(data,
     a[is.na(a)] <- (-10)
     xx <- rle(a)
     ww <- which(xx$values == (-10) & xx$length > A)
-    for (i in seqf(1, length(ww))) {
+    for (i in seq(1, length(ww))) {
       if (ww[i] > 1 & ww[i] < length(xx$value)) {
         if (xx$values[(ww[i] + 1)] == 100 & xx$length[(ww[i] + 1)] > B) {
           ## ubicamos la cadena de 100
@@ -2255,7 +2237,7 @@ special_character <- function(data, bucle = T, TS = 'D') {
       data[ac, ] <- apply(
         data[ac],
         1,
-        FUN = function(z) {
+        FUN = function(z) {s
           w <- which(z == -4)
           z[w] <- NA
           z[(w + 1)] <- NA

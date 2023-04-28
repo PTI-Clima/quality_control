@@ -23,7 +23,6 @@
 #' @return None
 #' @export
 #'
-#' @examples
 contol_hr <- function(RH, metadatos_originales_RH) {
   ###########################################################
   ########### REFORMATEAMOS DATOS A FORMATO ANCHO ###########
@@ -251,7 +250,6 @@ contol_hr <- function(RH, metadatos_originales_RH) {
 #' @return None
 #' @export
 #'
-#' @examples
 metadata_hr = function() {
   rename_metadata(C_HR)
   

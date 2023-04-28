@@ -22,7 +22,6 @@
 #' @return None
 #' @export
 #'
-#' @examples
 rename_metadata <- function(namevar) {
   ## cambiamos algunos archivos de directorio
   file.rename(file.path(
@@ -83,7 +82,6 @@ rename_metadata <- function(namevar) {
 #' @return None
 #' @export
 #'
-#' @examples
 delete_metadata <- function() {
   ## ELIMINAR LOS ARCHIVOS DE METADATOS QUE YA NO NECESITAMOS
   unlink('Duplicados/', recursive = T)
@@ -101,7 +99,6 @@ delete_metadata <- function() {
 #' @return datos de la variable tratados y metadatos originales
 #' @export
 #'
-#' @examples
 contol_temp1 = function(min, dist, namevar) {
   min = delete_na(min)
   colnames(min)[2] <- 'YEAR'
@@ -200,7 +197,6 @@ contol_temp1 = function(min, dist, namevar) {
 #' @return None
 #' @export
 #'
-#' @examples
 controles = function(var) {
   if (var == C_IN) {
     var = C_INS
@@ -238,6 +234,8 @@ controles = function(var) {
   #################################################
   ################# LECTURA #######################
   #################################################
+  
+  print('Reading data...')
 
   ## leemos los datos de los txt de AEMET
   min_max <-
@@ -245,6 +243,7 @@ controles = function(var) {
                   var = var,
                   data_source = data_source)
   if(length(min_max)==1 && is.na(min_max)){
+    print("Didn't read anything!")
     return(NA)
   }
 
@@ -253,11 +252,15 @@ controles = function(var) {
       list(min = list(value = min_max$min),
            max = list(value = min_max$max))
   }
+  
+  print("Creating distances file...")
 
   ## creamos el archivo de distancias.
   dist <- distancias(a = dataFiles,
                      var = var,
                      data_source = data_source)
+  
+  print("Executing quality control...")
 
   if (var == C_T) {
     min_max$min <- contol_temp1(min=min_max$min$value, dist=dist, namevar=C_MIN)
@@ -317,4 +320,6 @@ controles = function(var) {
     contol_ra(Ra=min_max$value, metadatos_originales_ra=min_max$metadatos)
     metadata_ra()
   }
+  
+  print(paste0("Finished controls for: ", var))
 }
