@@ -61,3 +61,25 @@ new_all_muestra/
 # Ficheros Alex
 code/
 hum_muestra_controles_internos.csv
+
+#C++
+*.d
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.mod
+*.smod
+*.lai
+*.la
+*.a
+*.lib
+*.exe
+*.out
+*.app
+

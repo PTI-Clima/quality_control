@@ -463,17 +463,17 @@ lectura_datos_aemet <- function(a, var) {
 #' @return matrizde datos
 #' @export
 #'
-#' @examples
 ficheroDistanciasLeer = function() {
   crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
+  crs30 = "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
 
   dist1 = read.csv("files_data/28c.txt", sep = ";")[, c(1:5)]
   dist2 = read.csv("files_data/30c.txt", sep = ";")[, c(1:5)]
 
   est_sp1 <- dist1
-  coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
-  proj4string(est_sp1) <- crs28
-  est_sp1 <- spTransform(est_sp1, CRS(crs30))
+  sp::coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
+  sp::proj4string(est_sp1) <- crs28
+  est_sp1 <- sp::spTransform(est_sp1, sp::CRS(crs30))
   dist1[, c("UTM.X", "UTM.Y")] = est_sp1@coords
   dist = rbind(dist1, dist2)
   dist = dist[dist[, "Base"] == C_SIAR,]
@@ -491,11 +491,13 @@ ficheroDistanciasLeer = function() {
   )
   dist["NOM_PROV"] = NA
   dist["LONGITUD"] = NA
+  
+  crslonlat <- "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs +type=crs"
 
   est_sp <- dist
-  coordinates(est_sp) <- c('C_X', 'C_Y')
-  proj4string(est_sp) <- crs30
-  est_sp = spTransform(est_sp, CRS(crslonlat))
+  sp::coordinates(est_sp) <- c('C_X', 'C_Y')
+  sp::proj4string(est_sp) <- crs30
+  est_sp = sp::spTransform(est_sp, sp::CRS(crslonlat))
   dist[, c("LONGITUD", "LATITUD")] = est_sp@coords
 
   return(dist)

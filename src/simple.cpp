@@ -298,7 +298,7 @@ std::string main_deteccion_duplicados(const char * fileOpen, double min, double 
 				}
 				if((k1 > (min+1)) && (k1 < (max+1)))
 				{
-					printf("k1 %d k %d j %d i %d\n", k1, k, j, i);
+					// printf("k1 %d k %d j %d i %d\n", k1, k, j, i);
 					if((eqi==0) & (eq>0)){
 						alleq = alleq + ";";
 					}

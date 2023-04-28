@@ -143,7 +143,7 @@ prepare.data <- function(name.type) {
 #' @param data.source Character string indicating the data source (default is "AEMET")
 #'
 #' @return None
-#' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc
+#' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc, sp
 #'
 #' @export
 qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
@@ -219,6 +219,9 @@ init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
   C_AEMET <<- "AEMET"
   C_SIAR <<- "SIAR"
   
+  C_MONTH <<- "month"
+  C_DAY <<- "day"
+  
   dataFiles <<- "data"
   
   if (data.source == "AEMET") {
@@ -240,8 +243,7 @@ launch.all.controls <- function(data.source = 'AEMET') {
   
   init.variables(data.source = data.source)
   
-  #vars = c(C_W, C_HR, C_PR, C_IN, C_R, C_T)
-  vars = c(C_IN, C_R, C_T)
+  vars = c(C_IN, C_W, C_HR, C_PR, C_R, C_T)
   
   qc.apply(vars, data.source = data.source)
   

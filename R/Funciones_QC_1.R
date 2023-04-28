@@ -247,6 +247,7 @@ controles = function(var) {
                   var = var,
                   data_source = data_source)
   if(length(min_max)==1 && is.na(min_max)){
+    print("Didn't read anything!")
     return(NA)
   }
 
