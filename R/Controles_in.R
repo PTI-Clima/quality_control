@@ -23,7 +23,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 contol_ins <- function(ins, metadatos_originales_ins) {
   ###########################################################
   ########### REFORMATEAMOS DATOS A FORMATO ANCHO ###########
@@ -83,7 +82,6 @@ contol_ins <- function(ins, metadatos_originales_ins) {
 #' @return None
 #' @export
 #'
-#' @examples
 metadata_ins = function() {
   rename_metadata(C_INS)
   

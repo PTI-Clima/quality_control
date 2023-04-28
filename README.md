@@ -46,8 +46,10 @@ variable to apply quality controls to. It must be one of the following: "tmax"
 
 Install the latest stable version from GitHub:
 
-library(devtools)
+```{r}
+library(devtools)  
 install_github('lcsc/quality_control', auth_token = "XXXXXXXXXXXXXXX")
+```
 This is a private repository, so a Github authentication token is necessary. 
 You can generate it in your profile page.
 
@@ -56,7 +58,7 @@ You can generate it in your profile page.
 
 ### Version 1.0, April 2023. 
 
-- First version on GitHub, based on an old couple of functions from 2016  
+- First version on GitHub, based on the work that Miquel Tomás did back in 2016  
 - Giving package structure  
 - Implementation of test functions  
 - Update README with installation instructions  
@@ -87,7 +89,7 @@ HU07 <- sample(5:100, size = 200, replace = T)
 HU13 <- sample(5:100, size = 200, replace = T)
 HU18 <- sample(5:100, size = 200, replace = T)
 
-# We convert it into a dataframe
+# Transformation into a dataframe
 df <- data.frame("INDICATIVO" = INDICATIVO,
 "AÑO" = AÑO,
 "MES" = MES,
@@ -97,7 +99,7 @@ df <- data.frame("INDICATIVO" = INDICATIVO,
 "HU13" = HU13,
 "HU18" = HU18)
 
-# We export it like a .csv or a .txt in the file \data\ (the first letter of the
+# Exportation like a .csv or a .txt in the file \data\ (the first letter of the
 climatological variable must be capitalized)
 write.table(df,
           "~/data/Humedad.csv",
@@ -106,7 +108,7 @@ write.table(df,
           quote = F,
           sep = ";")
 
-# Now we can run the function
+# Now, we can run the function
 library(quality_control)
 launch.controls(vars = "hr", data.source = "AEMET")
 

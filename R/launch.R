@@ -144,8 +144,7 @@ prepare.data <- function(name.type) {
 #'
 #' @return None
 #' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc
-#'
-#' @export
+
 qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
   
   # Parameters check ###########################################################
@@ -235,7 +234,8 @@ init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
 #' precipitation, sunshine duration, radiation and temperature.
 #' 
 #' @return No return value.
-#' @export
+#' @export launch.all.controls 
+
 launch.all.controls <- function(data.source = 'AEMET') {
   
   init.variables(data.source = data.source)
@@ -253,8 +253,8 @@ launch.all.controls <- function(data.source = 'AEMET') {
 #' This function applies quality controls to the specified variables.
 #'
 #' @param vars A character vector containing the variable names to apply quality controls to.
-#' @export
-#' 
+#' @export launch.controls
+
 launch.controls <- function(vars, data.source = 'AEMET') {
   
   init.variables(data.source = data.source)
