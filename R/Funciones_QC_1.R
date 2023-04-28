@@ -22,7 +22,6 @@
 #' @return None
 #' @export
 #'
-#' @examples
 rename_metadata <- function(namevar) {
   ## cambiamos algunos archivos de directorio
   file.rename(file.path(
@@ -83,7 +82,6 @@ rename_metadata <- function(namevar) {
 #' @return None
 #' @export
 #'
-#' @examples
 delete_metadata <- function() {
   ## ELIMINAR LOS ARCHIVOS DE METADATOS QUE YA NO NECESITAMOS
   unlink('Duplicados/', recursive = T)
@@ -101,7 +99,6 @@ delete_metadata <- function() {
 #' @return datos de la variable tratados y metadatos originales
 #' @export
 #'
-#' @examples 
 contol_temp1 = function(min, dist, namevar) {
   min = delete_na(min)
   colnames(min)[2] <- 'YEAR'
@@ -200,7 +197,6 @@ contol_temp1 = function(min, dist, namevar) {
 #' @return None
 #' @export
 #'
-#' @examples
 controles = function(var) {
   if (var == C_IN) {
     var = C_INS

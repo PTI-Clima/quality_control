@@ -23,7 +23,6 @@
 #' @return
 #' @export
 #'
-#' @examples
 contol_temp15 = function(min, namevar) {
   ###########################################################
   ########### REFORMATEAMOS DATOS A FORMATO ANCHO ###########
@@ -98,7 +97,6 @@ contol_temp15 = function(min, namevar) {
 #' @return
 #' @export
 #'
-#' @examples
 contol_temp2 = function(min,
                         metadatos_originales_min_ancho,
                         namevar) {
@@ -143,7 +141,6 @@ contol_temp2 = function(min,
 #' @return
 #' @export
 #'
-#' @examples
 contol_temp3 = function(min, namevar) {
   load.data(file = paste0(
     'Aberrantes/Paso 1/metadatos_aberrantes_',
@@ -168,7 +165,6 @@ contol_temp3 = function(min, namevar) {
 #' @return None
 #' @export
 #'
-#' @examples
 metadata_temp = function(namevar) {
   ## namevar
   rename_metadata(namevar)
