@@ -3,8 +3,9 @@ Type: Package
 Version: 0.1.0
 Date: 2023-04-10
 Title: Quality control
-Author: Santiago Beguería [aut] <santiago.begueria@csic.es>, 
-        Miguel Tomas Burguera [aut],Alejandro Royo Aranda [cre], 
+Author: Miguel Tomas Burguera [aut] <miquel.tomas@gmail.com>, Santiago Beguería [aut] 
+        <santiago.begueria@csic.es>, Borja Latorre [aut] <borja.latorre@csic.es>,
+        Fergus Reig Gracia <fergus@ipe.csic.es>, Alejandro Royo Aranda [cre], 
         Marcos Gil Guallar [cre]
 Maintainer: Alejandro Royo Aranda <a.royo@csic.es>,
             Marcos Gil Guallar <mgil@eead.csic.es>
