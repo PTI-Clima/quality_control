@@ -2,4 +2,5 @@
 ^\.Rproj\.user$
 
 data/*
+!data/Termo.RData
 new_all/*
