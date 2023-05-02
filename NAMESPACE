@@ -4,7 +4,6 @@ importFrom(Rcpp, evalCpp)
 
 export(launch.all.controls)
 export(launch.controls)
-export(Termo)
 
 import(chron)
 import(lattice)

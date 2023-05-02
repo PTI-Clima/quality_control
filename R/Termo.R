@@ -6,26 +6,29 @@
 #' @usage data(Termo)
 #' @section Details:
 #'  The dataframe contains the following variables:
-#'  @describe
-#'    @itemize
-#'      @item INDICATIVO:   The code of every weather station 
-#'        @item AÑO:   The year of the recording 
-#'        @item MES:   The month of the recording 
-#'        @item NOMBRE:   The name of the weather station 
-#'        @item ALTITUD:   The code of every weather station 
-#'        @item C_X:   The X UTM coordinates of the weather station 
-#'        @item C_Y:   The Y UTM coordinates of the weather station 
-#'        @item NOM_PROV:   The name of the province where the station is located 
-#'        @item LONGITUD:   The longitude coordinates of the weather station 
-#'        @item LATITUD:   The longitude coordinates of the weather station 
-#'        @item TMAXn:   The maximum temperature recorded the "n" day of the month 
-#'        @item TMINn:   The minimum temperature recorded the "n" day of the month 
-#' @source
-#' The data has been extracted from a small dataset made as example coming from the Spanish Meteorological Agency. For more information, visit the following link:
-#'  @url https://www.aemet.es/es/portada
+#'  \describe{
+#'    \itemize{
+#'      \item{INDICATIVO: }{The code of every weather station}
+#'      \item{AÑO: }{The year of the recording}
+#'      \item{MES: }{The month of the recording}
+#'      \item{NOMBRE: }{The name of the weather station}
+#'      \item{ALTITUD: }{The elevation of each station}
+#'      \item{C_X: }{The X UTM coordinates of the weather station}
+#'      \item{C_Y: }{The Y UTM coordinates of the weather station}
+#'      \item{NOM_PROV: }{The name of the province where the station is located}
+#'      \item{LONGITUD: }{The longitude coordinates of the weather station}
+#'      \item{LATITUD: }{The longitude coordinates of the weather station}
+#'      \item{TMAXn: }{The maximum temperature recorded the "n" day of the month}
+#'      \item{TMINn: }{The minimum temperature recorded the "n" day of the month}
+#'    }
+#'  }
+#'  
+#'  \source{
+#'    The data has been extracted from a small dataset made as example coming from the Spanish Meteorological Agency. For more information, visit the following link:
+#'      \url{https://www.aemet.es/es/portada}
+#'  }
 #'  
 #' @examples
 #' my_dataframe <- qualityControl::Termo
 #' 
-#' @export
-NULL
+"Termo"
