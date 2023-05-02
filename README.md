@@ -26,7 +26,10 @@ quality controls for the variables, which are wind speed, relative humidity,
 precipitation, sunshine duration, radiation and temperature.  
 
 - `launch.controls(vars, data.source = "AEMET")`: This function applies quality 
-controls to the specified variables.
+controls to the specified variables.  
+
+- `Termo`: This function provides to the user a small sample dataframe of the 
+variable temperature. For more information, write on the console: `help(Termo)`.  
 
 ## Arguments
 
