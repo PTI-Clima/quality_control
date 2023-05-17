@@ -303,7 +303,9 @@ load.data = function(file) {
 #' This function corrects the units of a weather series based on its type.
 #'
 #' @param series a numeric vector containing the values of the weather series to be corrected
-#' @param type a character string indicating the type of weather series, which can be one of "w" (wind speed), "hr" (relative humidity), "pr" (precipitation), "in" (insolation), "r" (radiation), "t" (temperature)
+#' @param type a character string indicating the type of weather series, which can be one of 
+#' "w" (wind speed), "hr" (relative humidity), "pr" (precipitation), "in" (insolation),
+#' "r" (radiation), "t" (temperature).
 #' 
 #' @return a numeric vector with the corrected values of the input series
 #'
