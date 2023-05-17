@@ -3,10 +3,11 @@ Type: Package
 Version: 0.1.0
 Date: 2023-04-10
 Title: Quality control
-Author: Miquel Tomas Burguera [aut] <miquel.tomas@gmail.com>, Santiago Beguería [aut] 
-        <santiago.begueria@csic.es>, Borja Latorre [aut] <borja.latorre@csic.es>,
-        Fergus Reig Gracia [aut] <fergus@ipe.csic.es>, Marcos Gil Guallar [aut],
-        Alejandro Royo Aranda [aut]   
+Author: Miquel Tomas-Burguera [aut] <miquel.tomas@gmail.com>,
+        Santiago Beguería [aut] <santiago.begueria@csic.es>,
+        Fergus Reig Gracia [cre] <fergus@ipe.csic.es>,
+        Marcos Gil Guallar [cre],
+        Alejandro Royo Aranda [cre]   
 Maintainer: Alejandro Royo Aranda <a.royo@csic.es>,
             Marcos Gil Guallar <mgil@eead.csic.es>
 Imports: chron, lattice, Rcpp, reshape, reshape2, Hmisc, plyr, sp
