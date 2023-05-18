@@ -9,7 +9,9 @@ correctUnits(series, type)
 \arguments{
 \item{series}{a numeric vector containing the values of the weather series to be corrected}
 
-\item{type}{a character string indicating the type of weather series, which can be one of "w" (wind speed), "hr" (relative humidity), "pr" (precipitation), "in" (insolation), "r" (radiation), "t" (temperature)}
+\item{type}{a character string indicating the type of weather series, which can be one of 
+"w" (wind speed), "hr" (relative humidity), "pr" (precipitation), "in" (insolation),
+"r" (radiation), "t" (temperature).}
 }
 \value{
 a numeric vector with the corrected values of the input series

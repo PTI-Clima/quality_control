@@ -3,14 +3,15 @@ Type: Package
 Version: 0.1.0
 Date: 2023-04-10
 Title: Quality control
-Author: Santiago Beguería [aut, cre] <santiago.begueria@csic.es>,
-        Santiago Beguería [aut] <santiago.begueria@csic.es>,
+Author: Miquel Tomas-Burguera [aut, cre] <miquel.tomas@gmail.com>,
+        Borja Latorre Garcés [aut] <borja.latorre@csic.es>,
         Fergus Reig Gracia [aut] <fergus@ipe.csic.es>,
-        Marcos Gil Guallar [aut],
-        Alejandro Royo Aranda [aut]
+        Santiago Beguería [aut, cre] <santiago.begueria@csic.es>,
+        Marcos Gil Guallar [aut, cre],
+        Alejandro Royo Aranda [aut, cre]
 Maintainer: Santiago Beguería <santiago.begueria@csic.es>
 Imports: chron, lattice, Rcpp, reshape, reshape2, Hmisc, plyr, sp
-Depends: R (>= 2.12.0)
+Depends: R (>= 3.5.0)
 Description: Daily quality control on the raw input data
 License: GPL (>= 3)
 URL: https://lcsc.csic.es
