@@ -359,7 +359,7 @@ agrupar_duplicados <- function(data, n = 31, m = 1) {
     
     for (i in 1:dim(unicos)[1]) {
       s[[i]] <-
-        join(
+        plyr::join(
           data,
           unicos[i, 1:(n + 3)],
           by = colnames(data)[(m + 3):(n + 3)],
@@ -1068,7 +1068,7 @@ agrupar_duplicados_offset <- function(x, a) {
   
   s <- list(NULL)
   for (i in 1:dim(unicos)[1]) {
-    y <- join(a,
+    y <- plyr::join(a,
                         unicos[i, 1:31],
                         by = colnames(a)[4:31],
                         type = 'inner',
