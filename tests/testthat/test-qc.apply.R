@@ -22,8 +22,8 @@ test_that("the function throws an error when the climatalogical variables are a 
 test_that("the function generates the correct output file", {
   setwd("../../")
   init.variables()
-  vars = "w"
-  output.file <- "new_all/out_files/w_ok.rds"
+  vars = "r"
+  output.file <- "new_all/out_files/r_ok.rds"
   exists <- file.exists(output.file)
   if (!exists){
     qc.apply(vars)

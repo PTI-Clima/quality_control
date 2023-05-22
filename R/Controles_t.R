@@ -21,7 +21,7 @@
 #' @param namevar nombre variable
 #'
 #' @return
-#' @export
+#'
 #'
 contol_temp15 = function(min, namevar) {
   ###########################################################
@@ -95,7 +95,7 @@ contol_temp15 = function(min, namevar) {
 #' @param namevar nombre variable
 #'
 #' @return
-#' @export
+#'
 #'
 contol_temp2 = function(min,
                         metadatos_originales_min_ancho,
@@ -139,7 +139,7 @@ contol_temp2 = function(min,
 #' @param namevar nombre variable
 #'
 #' @return
-#' @export
+#'
 #'
 contol_temp3 = function(min, namevar) {
   load.data(file = paste0(
@@ -163,7 +163,7 @@ contol_temp3 = function(min, namevar) {
 #' Preparación de los metadatos de temp para su guardado
 #'
 #' @return None
-#' @export
+#'
 #'
 metadata_temp = function(namevar) {
   ## namevar

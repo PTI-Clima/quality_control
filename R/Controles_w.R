@@ -21,7 +21,7 @@
 #' @param metadatos_originales_U10 metadatos_originales
 #'
 #' @return
-#' @export
+#'
 #'
 contol_w <- function(U10, metadatos_originales_U10) {
   ###########################################################
@@ -243,7 +243,7 @@ contol_w <- function(U10, metadatos_originales_U10) {
 #' Preparación de los metadatos de w para su guardado
 #'
 #' @return None
-#' @export
+#'
 #'
 metadata_w = function() {
   rename_metadata(C_W)

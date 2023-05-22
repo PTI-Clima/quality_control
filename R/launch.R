@@ -143,7 +143,7 @@ prepare.data <- function(name.type) {
 #' @param data.source Character string indicating the data source (default is "AEMET")
 #'
 #' @return None
-#' @import chron, lattice, Rcpp, reshape, reshape2, Hmisc, sp
+#' @import chron lattice Rcpp reshape reshape2 Hmisc sp
 #'
 #' @export
 qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {

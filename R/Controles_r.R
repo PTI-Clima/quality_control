@@ -21,7 +21,7 @@
 #' @param metadatos_originales_ra metadatos_originales
 #'
 #' @return
-#' @export
+#'
 #'
 contol_ra <- function(Ra, metadatos_originales_ra) {
   ###########################################################
@@ -74,7 +74,7 @@ contol_ra <- function(Ra, metadatos_originales_ra) {
 #' Preparación de los metadatos de ra para su guardado
 #'
 #' @return None
-#' @export
+#'
 #'
 metadata_ra = function() {
   rename_metadata(C_RA)

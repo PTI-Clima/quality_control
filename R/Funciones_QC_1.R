@@ -20,7 +20,7 @@
 #' @param namevar variable a tratar
 #'
 #' @return None
-#' @export
+#'
 #'
 rename_metadata <- function(namevar) {
   ## cambiamos algunos archivos de directorio
@@ -80,7 +80,7 @@ rename_metadata <- function(namevar) {
 #' Borrado de metadatos no útiles
 #'
 #' @return None
-#' @export
+#'
 #'
 delete_metadata <- function() {
   ## ELIMINAR LOS ARCHIVOS DE METADATOS QUE YA NO NECESITAMOS
@@ -97,7 +97,7 @@ delete_metadata <- function() {
 #' @param namevar variable a tratar
 #'
 #' @return datos de la variable tratados y metadatos originales
-#' @export
+#'
 #'
 contol_temp1 = function(min, dist, namevar) {
   min = delete_na(min)
@@ -195,7 +195,7 @@ contol_temp1 = function(min, dist, namevar) {
 #' @param var variable a tratar
 #'
 #' @return None
-#' @export
+#'
 #'
 controles = function(var) {
   if (var == C_IN) {
