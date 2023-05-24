@@ -49,12 +49,12 @@ po/*~
 rsconnect/
 
 data_raw/
-
+!data/Termo.RData
 AEMET/
 data_QC/
-new_all/
 *.Rproj
 *.pper
+
 
 # Ficheros R compilados
 *.Rc

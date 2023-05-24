@@ -492,7 +492,7 @@ ficheroDistanciasLeer = function() {
   dist["NOM_PROV"] = NA
   dist["LONGITUD"] = NA
   
-  crslonlat <- "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs +type=crs"
+  crslonlat <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
 
   est_sp <- dist
   sp::coordinates(est_sp) <- c('C_X', 'C_Y')
