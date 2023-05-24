@@ -70,10 +70,13 @@ You can generate it in your profile page.
 
 ## References  
 
-Olcina Cantos, Jorge; Rico Amorós, Antonio M.; Moltó Mantero, Enrique (eds.). 
-Clima, sociedad, riesgos y ordenación del territorio. Alicante: Instituto 
-Interuniversitario de Geografía, Universidad de Alicante; [Sevilla]: 
-Asociación Española de Climatología, 2016, p. 407-415  
+Tomas Burguera, M., Jiménez Castañeda, A., Luna Rico, Y., Morata Gasca, A., Vicente
+Serrano, S. M., González Hidalgo, J. C., & Beguería, S. (2016). Control de calidad
+de siete variables del banco nacional de datos de AEMET. En: Olcina Cantos, Jorge,
+Rico Amorós, Antonio M., Moltó Mantero, Enrique (eds.), Clima, sociedad, riesgos y
+ordenación del territorio. Alicante: Instituto Interuniversitario de Geografía,
+Universidad de Alicante y Asociación Española de Climatología, pp. 407-415. DOI:
+http://dx.doi.org/10.14198/XCongresoAECAlicante2016-38.
 
 ---
 

@@ -15,7 +15,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/> <http://www.gnu.org/licenses/gpl.txt/>.
 #####################################################################
 
-#' Tratamiento de datos de W, final de la revisión de datos diarios
+#' Tratamiento de datos de W, final de la revisión de datos diarios.
+#' En primer lugar se agrega de datos sub-diarios (lecturas a las 00, 07,
+#' 13 y 18 horas) a datos diarios. Luego se detectan datos repetidos,
+#' datos aberrantes, y los propios controles de calidad de AEMET.
 #'
 #' @param U10 datos
 #' @param metadatos_originales_U10 metadatos_originales

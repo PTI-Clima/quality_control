@@ -2,7 +2,10 @@
 % Please edit documentation in R/Controles_w.R
 \name{contol_w}
 \alias{contol_w}
-\title{Tratamiento de datos de W, final de la revisión de datos diarios}
+\title{Tratamiento de datos de W, final de la revisión de datos diarios.
+En primer lugar se agrega de datos sub-diarios (lecturas a las 00, 07,
+13 y 18 horas) a datos diarios. Luego se detectan datos repetidos,
+datos aberrantes, y los propios controles de calidad de AEMET.}
 \usage{
 contol_w(U10, metadatos_originales_U10)
 }
@@ -12,5 +15,8 @@ contol_w(U10, metadatos_originales_U10)
 \item{metadatos_originales_U10}{metadatos_originales}
 }
 \description{
-Tratamiento de datos de W, final de la revisión de datos diarios
+Tratamiento de datos de W, final de la revisión de datos diarios.
+En primer lugar se agrega de datos sub-diarios (lecturas a las 00, 07,
+13 y 18 horas) a datos diarios. Luego se detectan datos repetidos,
+datos aberrantes, y los propios controles de calidad de AEMET.
 }
