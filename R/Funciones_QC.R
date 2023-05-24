@@ -27,7 +27,7 @@
 #' @param data Matriz que se devolverá una vez eliminadas que no aportan información
 #'
 #' @return Matriz de datos
-#' @export
+#'
 #'
 #' @examples
 delete_na = function(data) {
@@ -44,7 +44,7 @@ delete_na = function(data) {
 #' @param dist Matriz de distancias
 #'
 #' @return Matriz de datos
-#' @export
+#'
 #'
 #' @examples
 delete_no_dist = function(data, dist) {
@@ -65,7 +65,7 @@ delete_no_dist = function(data, dist) {
 #' @param data2 Matriz auxiliar con la que comparar filas y columnas
 #'
 #' @return Matriz de datos
-#' @export
+#'
 #'
 #' @examples
 compatibles_row_col = function(data1, data2) {
@@ -79,7 +79,7 @@ compatibles_row_col = function(data1, data2) {
 #' @param var tipo de datos (tmin, pr...)
 #'
 #' @return Matriz de datos
-#' @export
+#'
 #'
 #' @examples
 lectura_datos_siar_var = function(a, var) {
@@ -185,7 +185,7 @@ lectura_datos_siar_var = function(a, var) {
 #' @param var tipo de datos (tmin, pr...)
 #'
 #' @return Matriz o lista de matrices de datos
-#' @export
+#'
 #'
 #' @examples
 lectura_datos_siar <- function(a, var) {
@@ -206,7 +206,7 @@ lectura_datos_siar <- function(a, var) {
 #' @param data_source fuente de los datos (AEMET o SIAR)
 #'
 #' @return Matriz o lista de matrices de datos
-#' @export
+#'
 #'
 #' @examples
 lectura_datos <- function(a, var, data_source = C_AEMET) {
@@ -224,7 +224,7 @@ lectura_datos <- function(a, var, data_source = C_AEMET) {
 #' @param data_source fuente de los datos (AEMET o SIAR)
 #'
 #' @return Matriz o lista de matrices de datos
-#' @export
+#'
 #'
 #' @examples
 lectura_datos_aemet <- function(a, var) {
@@ -461,7 +461,7 @@ lectura_datos_aemet <- function(a, var) {
 #' Lee archivos de distancias y homogeneiza las coordenadas
 #'
 #' @return matrizde datos
-#' @export
+#'
 #'
 ficheroDistanciasLeer = function() {
   crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
@@ -510,7 +510,7 @@ ficheroDistanciasLeer = function() {
 #' @param data_source fuente de los datos (AEMET o SIAR)
 #'
 #' @return data frame de datos
-#' @export
+#'
 #'
 #' @examples
 distancias <- function(a, var, data_source = C_AEMET) {
@@ -609,7 +609,7 @@ distancias <- function(a, var, data_source = C_AEMET) {
 #' @param datos matriz de datos
 #'
 #' @return Matriz de datos
-#' @export
+#'
 #'
 #' @examples
 crear_metadatos_originales <- function(datos) {
@@ -633,7 +633,7 @@ crear_metadatos_originales <- function(datos) {
 #' @param data_source Distinguir si tratamos datos de la AEMET o del SIAR
 #'
 #' @return None
-#' @export
+#'
 #'
 meses_duplicados <-
   function(datos,
@@ -759,7 +759,7 @@ meses_duplicados <-
 #' @param data_source Distinguir si tratamos datos de la AEMET o del SIAR
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 decenas_duplicadas <-
@@ -856,7 +856,7 @@ decenas_duplicadas <-
 #' @param data_source Distinguir si tratamos datos de la AEMET o del SIAR
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 intradecenas_duplicadas <-
@@ -904,7 +904,7 @@ intradecenas_duplicadas <-
 #' @param data_source Distinguir si tratamos datos de la AEMET o del SIAR
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 deteccion_duplicados_25_dias <-
@@ -1023,7 +1023,7 @@ deteccion_duplicados_25_dias <-
 #' @param metadata frame de metadatos correspondientes a los datos
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 n_dias_duplicados <- function(data, meta) {
@@ -1107,7 +1107,7 @@ n_dias_duplicados <- function(data, meta) {
 #' @param pasada distinguimos entre la primera y segunda pasada para guardar algunos datos
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 offset_duplicated_rain <- function(data,
@@ -1223,7 +1223,7 @@ offset_duplicated_rain <- function(data,
 #' @param pasada distinguimos entre la primera y segunda pasada para guardar algunos datos
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
@@ -1386,7 +1386,7 @@ agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
 #' @param datos matriz de datos
 #'
 #' @return data frame de de los datos con el nuevo formato
-#' @export
+#'
 #'
 #' @examples
 reformat <- function(datos) {
@@ -1441,7 +1441,7 @@ reformat <- function(datos) {
 #' @param dat18 matriz de datos a las 18
 #'
 #' @return matriz de datos diarios
-#' @export
+#'
 #'
 #' @examples
 from_subdaily_to_daily <- function(dat07, dat13, dat18) {
@@ -1462,7 +1462,7 @@ from_subdaily_to_daily <- function(dat07, dat13, dat18) {
 #' @param vart Hora del día de los datos (no para todos los var)
 #'
 #' @return matriz de metadatos o none
-#' @export
+#'
 #'
 #' @examples
 detectar_consecutivos <- function(datos, metadatos, var, vart = NULL) {
@@ -1602,7 +1602,7 @@ detectar_consecutivos <- function(datos, metadatos, var, vart = NULL) {
 #' @param G si los datos máximos deben estar por debajo o por encima de 95
 #'
 #' @return Matriz de metadatos
-#' @export
+#'
 #'
 #' @examples
 poca_variacion_bucle <- function(x_07,
@@ -1674,7 +1674,7 @@ poca_variacion_bucle <- function(x_07,
 #' @param var tipo de datos (pr, tmin...)
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 zeros_aislados <- function(datos, metadatos, var) {
@@ -1706,7 +1706,7 @@ zeros_aislados <- function(datos, metadatos, var) {
 #' @param dat2 Matriz de tmin o tmax
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 #' dat1=min; dat2=max
@@ -1749,7 +1749,7 @@ zeros_dobles <- function(dat1, dat2) {
 #' @param var tipo de datos (tmin, pr...) 
 #'
 #' @return matriz de metadatos o none
-#' @export
+#'
 #'
 #' @examples
 mala_codificacion_temperatura <-
@@ -1848,7 +1848,7 @@ mala_codificacion_temperatura <-
 #' @param vart Hora del día de los datos (no para todos los var)
 #'
 #' @return Matriz de metadatos
-#' @export
+#'
 #'
 #' @examples
 deteccion_aberrantes <- function(data, metadatos, var, vart = NULL) {
@@ -1981,7 +1981,7 @@ deteccion_aberrantes <- function(data, metadatos, var, vart = NULL) {
 #' @param metadatos_max Matriz de metadatos de tmax
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 min_sup_eq_max <-
@@ -2019,7 +2019,7 @@ min_sup_eq_max <-
 #' @param th_dr Diferencia permitida entre tmin y tmax
 #'
 #' @return None
-#' @export
+#'
 #'
 #' @examples
 daily_range <-
@@ -2052,7 +2052,7 @@ daily_range <-
 #' @param metadata matriz de metadatos de los datos
 #'
 #' @return matriz de datos
-#' @export
+#'
 #'
 eliminar_datos <- function(data, metadata) {
   data = compatibles_row_col(data, metadata)
@@ -2082,7 +2082,7 @@ eliminar_datos <- function(data, metadata) {
 #' @param B Longitud mínima de la cadena de 100's
 #'
 #' @return Metadatos de los datos
-#' @export
+#'
 #'
 #' @examples
 cien_entre_nas <- function(data,
@@ -2125,7 +2125,7 @@ cien_entre_nas <- function(data,
 #' @param D Parámetro para los cálculos, máximo de horas de insolación
 #'
 #' @return Metadatos de los datos
-#' @export
+#'
 #'
 #' @examples
 max_mobil  <- function(a, b, C = 15, D = 20) {
@@ -2167,7 +2167,7 @@ max_mobil  <- function(a, b, C = 15, D = 20) {
 #' @param TS D si queremos eliminar todos los -4
 #'
 #' @return Lista con los datos y los matedatos
-#' @export
+#'
 #'
 #' @examples
 special_character <- function(data, bucle = T, TS = 'D') {

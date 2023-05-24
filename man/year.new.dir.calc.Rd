@@ -15,14 +15,8 @@ A character string representing the directory name.
 \description{
 This function calculates the directory name for a given year or day value. If the value
 is a year, the directory name will be the same as the year value. If the value is a day,
-the directory name will be "new_all". If the value is missing or NA, the directory name
-will also be "new_all".
-}
-\examples{
-year.new.dir.calc(2023)
-year.new.dir.calc("2023-04-10")
-year.new.dir.calc(NA)
-
+the directory name will be "data_QC". If the value is missing or NA, the directory name
+will also be "data_QC".
 }
 \keyword{day}
 \keyword{directory}

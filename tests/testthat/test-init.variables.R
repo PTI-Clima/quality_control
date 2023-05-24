@@ -3,7 +3,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the qc.apply function")
+# context("Testing the qc.apply function")
 
 # ---------------------------------------------------------------------------- #
 

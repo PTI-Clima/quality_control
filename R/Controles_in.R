@@ -21,7 +21,7 @@
 #' @param metadatos_originales_ins metadatos_originales
 #'
 #' @return
-#' @export
+#'
 #'
 contol_ins <- function(ins, metadatos_originales_ins) {
   ###########################################################
@@ -80,7 +80,7 @@ contol_ins <- function(ins, metadatos_originales_ins) {
 #' Preparación de los metadatos de ins para su guardado
 #'
 #' @return None
-#' @export
+#'
 #'
 metadata_ins = function() {
   rename_metadata(C_INS)

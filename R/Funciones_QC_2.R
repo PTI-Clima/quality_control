@@ -29,7 +29,7 @@
 #' @param data_source fuente de los datos (AEMET o SIAR)
 #'
 #' @return duplicados es una lista que contiene 4 elementos. Los duplicados a 28, 29, 30 y 31 dias; metadatos_meses_duplicados_detectados vale '1' en duplicados, '0' en originales, 'NA' en no disponibles
-#' @export
+#'
 #'
 deteccion_duplicados <-
   function(datos, metadatos, var, data_source = C_AEMET) {
@@ -126,7 +126,7 @@ deteccion_duplicados <-
 #' @param var tipo de dato (tmin, pr...)
 #'
 #' @return lista de matriz de datos y de metadatos
-#' @export
+#'
 #'
 buscar_duplicados <- function(data, meta, nz = 10, n, var) {
   data_2 <- data
@@ -176,7 +176,7 @@ buscar_duplicados <- function(data, meta, nz = 10, n, var) {
 #' @param data_source matriz de metadatos de los datos
 #'
 #' @return lista de matrices de datos a eliminar y metadatos
-#' @export
+#'
 #'
 tratamiento_duplicados <-
   function(datos,
@@ -224,7 +224,7 @@ tratamiento_duplicados <-
 #' @param cons TRUE para eliminar duplicados consecutivos
 #'
 #' @return matriz de metadatos de los datos
-#' @export
+#'
 #'
 tratamiento_unicos <- function(x, s, b, d, n, cons = F) {
 
@@ -346,7 +346,7 @@ tratamiento_unicos <- function(x, s, b, d, n, cons = F) {
 #' @param m posición de inicio del periodo
 #'
 #' @return lista de matrices de duplicados
-#' @export
+#'
 #'
 agrupar_duplicados <- function(data, n = 31, m = 1) {
   
@@ -381,7 +381,7 @@ agrupar_duplicados <- function(data, n = 31, m = 1) {
 #' @param data_source fuente de los datos (AEMET, SIAR)
 #'
 #' @return lista de matriz de metadatos y una lista de duplicados por decenas de días del mes
-#' @export
+#'
 #'
 deteccion_decenas_duplicadas <-
   function(data, metadatos, var, data_source = C_AEMET) {
@@ -431,7 +431,7 @@ deteccion_decenas_duplicadas <-
 #' @param data_source fuente de los datos (AEMET, SIAR)
 #'
 #' @return lista de matrices de duplicados y metadatos
-#' @export
+#'
 #'
 decadal_duplicated <-
   function(data,
@@ -502,7 +502,7 @@ decadal_duplicated <-
 #' @param dat lista de matrices de duplicados
 #'
 #' @return lista de matrices de duplicados que cumplen la condición
-#' @export
+#'
 #'
 filter_dec_dupl <- function(dat) {
   w <- NULL
@@ -530,7 +530,7 @@ filter_dec_dupl <- function(dat) {
 #' @param n posición de fin (según númoer de datos diarios y numero de días del mes)
 #'
 #' @return matriz de metadatos de los datos
-#' @export
+#'
 #'
 tratamiento_decadas <- function(s, b, dec, m = 1, n = 10) {
   if (dec == 1) {
@@ -567,7 +567,7 @@ tratamiento_decadas <- function(s, b, dec, m = 1, n = 10) {
 #' @param data_source fuente de los datos (AEMET, SIAR)
 #'
 #' @return matriz de metadatos
-#' @export
+#'
 #'
 tratar_decenas_duplicadas <-
   function(dec_dupl, metadatos, var, data_source = C_AEMET) {
@@ -653,7 +653,7 @@ tratar_decenas_duplicadas <-
 #' @param d matriz de distancias
 #'
 #' @return matriz de metadatos
-#' @export
+#'
 #'
 tratamiento_unicos_25 <- function(x, s, b, d) {
   th_dist = 1000
@@ -751,7 +751,7 @@ tratamiento_unicos_25 <- function(x, s, b, d) {
 #' @param data_source data_source fuente de los datos (AEMET, SIAR)
 #'
 #' @return lista de matrices de datos duplicados y metadatos
-#' @export
+#'
 #'
 intradecadal_duplicated <-
   function(data, meta, var, data_source = C_AEMET) {
@@ -852,7 +852,7 @@ intradecadal_duplicated <-
 #' @param metadatos matriz de metadatos correspondientes a los datos
 #'
 #' @return matriz de metadatos
-#' @export
+#'
 #'
 obtener_resolucion <- function(datos, metadatos) {
   for (i in 4:ncol(datos)) {
@@ -889,7 +889,7 @@ obtener_resolucion <- function(datos, metadatos) {
 #' @param C cuantos días consecutivos buscamos, 7 o 14
 #'
 #' @return
-#' @export
+#'
 #'
 consecutivos <- function(datos, metadatos, C = 7) {
   for (i in 4:ncol(datos)) {
@@ -913,7 +913,7 @@ consecutivos <- function(datos, metadatos, C = 7) {
 #' @param var tipo de datos (tmin, pr...)
 #'
 #' @return matriz de metadatos
-#' @export
+#'
 #'
 combinar_metadatos_consecutivos <-
   function(metadatos_a,
@@ -960,7 +960,7 @@ combinar_metadatos_consecutivos <-
 #' @param metadatos matriz de metadatos de los datos
 #'
 #' @return matriz de metadatos
-#' @export
+#'
 #'
 comprobar_consecutivos_insolacion <- function(datos, metadatos) {
   load.data('coords_ins.RData')
@@ -1009,7 +1009,7 @@ comprobar_consecutivos_insolacion <- function(datos, metadatos) {
 #' @param dias día del mes
 #'
 #' @return valor
-#' @export
+#'
 #'
 maximo_teorico <- function(month,
                            lat,
@@ -1053,7 +1053,7 @@ maximo_teorico <- function(month,
 #' @param a matriz de duplicados
 #'
 #' @return lista de matrices
-#' @export
+#'
 #'
 agrupar_duplicados_offset <- function(x, a) {
   suppressPackageStartupMessages(require(plyr))

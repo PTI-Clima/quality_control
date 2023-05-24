@@ -48,11 +48,10 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-data/*
+data_raw/
 !data/Termo.RData
 AEMET/
-new_all/
-new_all_muestra/
+data_QC/
 *.Rproj
 *.pper
 

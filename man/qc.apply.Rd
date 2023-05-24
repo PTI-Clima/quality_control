@@ -4,7 +4,7 @@
 \alias{qc.apply}
 \title{qc.apply}
 \usage{
-qc.apply(vars, output.folder = "new_all", data.source = "AEMET")
+qc.apply(vars, output.folder = "data_QC", data.source = "AEMET")
 }
 \arguments{
 \item{vars}{Character vector of variable types to apply QC to}

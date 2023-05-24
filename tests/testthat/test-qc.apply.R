@@ -3,7 +3,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the qc.apply function")
+# context("Testing the qc.apply function")
 
 # ---------------------------------------------------------------------------- #
 
@@ -20,10 +20,12 @@ test_that("the function throws an error when the climatalogical variables are a 
 })
 
 test_that("the function generates the correct output file", {
-  setwd("../../")
+  print(getwd())
+  print(basename(getwd()))
+  setwd("../../../quality_control")
   init.variables()
-  vars = "w"
-  output.file <- "new_all/out_files/w_ok.rds"
+  vars = "r"
+  output.file <- "data_QC/metadata/r_ok.rds"
   exists <- file.exists(output.file)
   if (!exists){
     qc.apply(vars)
@@ -31,11 +33,3 @@ test_that("the function generates the correct output file", {
   }
   expect_true(exists)
 })
-
-# test_that("the function is able to calculate tmin if var = t", {
-#   init.variables()
-#   vars = "t"
-#   qc.apply(vars = vars, output.folder = "new_all", data.source = "AEMET")
-#   x = load(paste(dataOutFiles, sep = "", "/tmin"))
-#   expect_s3_class(x, "data.frame")
-# })

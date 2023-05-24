@@ -21,7 +21,7 @@
 #' @param metadatos_originales_RH metadatos_originales
 #'
 #' @return None
-#' @export
+#'
 #'
 contol_hr <- function(RH, metadatos_originales_RH) {
   ###########################################################
@@ -248,7 +248,7 @@ contol_hr <- function(RH, metadatos_originales_RH) {
 #' Preparación de los metadatos de hr para su guardado
 #'
 #' @return None
-#' @export
+#'
 #'
 metadata_hr = function() {
   rename_metadata(C_HR)

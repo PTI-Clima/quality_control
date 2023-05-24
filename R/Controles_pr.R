@@ -22,7 +22,7 @@
 #' @param dist
 #'
 #' @return
-#' @export
+#'
 #'
 contol_pp <- function(Pre, metadatos_originales_pre, dist) {
   ## Transformamos los -3 a 0 y eliminamos los -4 y su lluvia posterior
