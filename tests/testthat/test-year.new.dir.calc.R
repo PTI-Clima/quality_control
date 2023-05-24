@@ -3,7 +3,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the year.new.dir.calc function")
+# context("Testing the year.new.dir.calc function")
 
 # ---------------------------------------------------------------------------- #
 

@@ -3,7 +3,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the prepare.data function")
+# context("Testing the prepare.data function")
 
 # ---------------------------------------------------------------------------- #
 
@@ -20,8 +20,9 @@ test_that("Check that the function receives a non-null climatological variable",
 })
 
 test_that("The function creates the correct output files", {
+  setwd("../../../quality_control")
   init.variables()
-  var <- "w"
+  var <- "r"
   prepare.data(var)
-  expect_true(file.exists("../..//data_QC/AEMET/data_coor/w.csv") & file.exists("../../data_QC/AEMET/data_sort/w.csv"))
+  expect_true(file.exists("data_QC/data_coor/r.csv") & file.exists("data_QC/data_sort/r.csv"))
 })

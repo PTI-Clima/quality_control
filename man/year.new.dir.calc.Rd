@@ -18,12 +18,6 @@ is a year, the directory name will be the same as the year value. If the value i
 the directory name will be "data_QC". If the value is missing or NA, the directory name
 will also be "data_QC".
 }
-\examples{
-year.new.dir.calc(2023)
-year.new.dir.calc("2023-04-10")
-year.new.dir.calc(NA)
-
-}
 \keyword{day}
 \keyword{directory}
 \keyword{name,}

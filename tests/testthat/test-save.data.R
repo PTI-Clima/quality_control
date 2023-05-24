@@ -3,7 +3,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the save.data function")
+# context("Testing the save.data function")
 
 # ---------------------------------------------------------------------------- #
 

@@ -11,11 +11,6 @@
 #'
 #' @return A character string representing the directory name.
 #'
-#' @examples
-#' year.new.dir.calc(2023)
-#' year.new.dir.calc("2023-04-10")
-#' year.new.dir.calc(NA)
-#'
 #' @keywords directory name, year, day
 year.new.dir.calc = function(year.new) {
   if (!is.na(year.new)) {

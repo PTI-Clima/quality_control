@@ -1,7 +1,7 @@
 library(testthat)
 
 # Define a context for the tests
-context("Testing the correctUnits function")
+# context("Testing the correctUnits function")
 
 # Create the object series with the aim of testing the function
 set.seed(12)
