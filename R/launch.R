@@ -225,9 +225,9 @@ init.variables <- function(output.folder = "data_QC", data.source = "AEMET") {
   dataFiles <<- "data_raw"
   
   if (data.source == "AEMET") {
-    dataOutFiles <<- file.path(output.folder, "data_QC")
+    dataOutFiles <<- file.path(output.folder, "metadata")
   } else {
-    dataOutFiles <<- file.path(output.folder, paste("data_QC", data.source, sep="_"))
+    dataOutFiles <<- file.path(output.folder, paste("metadata", data.source, sep="_"))
   }
   
 }
