@@ -12,7 +12,7 @@ test_that("the function generates the correct output file", {
   init.variables()
   vars = c(C_W, C_HR, C_PR, C_IN, C_R)
   for (v in vars) {
-    output.file <- paste0("new_all/out_files/", v, "_ok.rds")
+    output.file <- paste0("data_QC/metadata/", v, "_ok.rds")
     print(output.file)
     exists <- file.exists(output.file)
     if (!exists){

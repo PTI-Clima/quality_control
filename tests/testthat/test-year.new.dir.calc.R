@@ -7,10 +7,10 @@ context("Testing the year.new.dir.calc function")
 
 # ---------------------------------------------------------------------------- #
 
-test_that("if year.new is NA, the function returns new_all", {
+test_that("if year.new is NA, the function returns data_QC", {
   year.new <- NA
   x <- year.new.dir.calc(year.new)
-  expect_equal(x, "new_all")
+  expect_equal(x, "data_QC")
 })
 
 # ---------------------------------------------------------------------------- #
@@ -23,10 +23,10 @@ test_that("if nchar(year.new) is <= 4, input = output", {
 
 # ---------------------------------------------------------------------------- #
 
-test_that("if nchar(year.new) is > 4, year.new.dir = new_all", {
+test_that("if nchar(year.new) is > 4, year.new.dir = data_QC", {
   year.new <- "2023-04-19"
   x <- year.new.dir.calc(year.new)
-  expect_equal(x, "new_all")
+  expect_equal(x, "data_QC")
 })
 
 # ---------------------------------------------------------------------------- #

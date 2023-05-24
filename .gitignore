@@ -50,7 +50,7 @@ rsconnect/
 
 data/
 AEMET/
-new_all/
+data_QC/
 new_all_muestra/
 *.Rproj
 *.pper

@@ -4,8 +4,8 @@
 #'
 #' This function calculates the directory name for a given year or day value. If the value
 #' is a year, the directory name will be the same as the year value. If the value is a day,
-#' the directory name will be "new_all". If the value is missing or NA, the directory name
-#' will also be "new_all".
+#' the directory name will be "data_QC". If the value is missing or NA, the directory name
+#' will also be "data_QC".
 #'
 #' @param year.new A numeric or character value representing a year or day.
 #'
@@ -22,10 +22,10 @@ year.new.dir.calc = function(year.new) {
     if(nchar(year.new) <= 4){ # year
       year.new.dir = year.new
     }else{ # day
-      year.new.dir = "new_all"
+      year.new.dir = "data_QC"
     }
   } else{ # NA
-    year.new.dir = "new_all"
+    year.new.dir = "data_QC"
   }
   return(year.new.dir)
 }
@@ -109,7 +109,7 @@ prepare.data <- function(name.type) {
   coor = transform(coor, LATITUD = as.character(LATITUD))
   coor = transform(coor, NOM_PROV = as.character(NOM_PROV))
   
-  folder = file.path(as.character(year.new.dir.calc(NA)), data_source)
+  folder = file.path(as.character(year.new.dir.calc(NA)))
   dir.create(folder, showWarnings = FALSE)
   dir.create(file.path(folder, "data_sort"), showWarnings = FALSE)
   dir.create(file.path(folder, "data_coor"), showWarnings = FALSE)
@@ -146,7 +146,7 @@ prepare.data <- function(name.type) {
 #' @import chron lattice Rcpp reshape reshape2 Hmisc sp
 #'
 #' @export
-qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
+qc.apply <- function(vars, output.folder = "data_QC", data.source = "AEMET") {
   
   # Parameters check ###########################################################
   
@@ -194,7 +194,7 @@ qc.apply <- function(vars, output.folder = "new_all", data.source = "AEMET") {
 #' 
 #' @noRd
 #'
-init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
+init.variables <- function(output.folder = "data_QC", data.source = "AEMET") {
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -222,12 +222,12 @@ init.variables <- function(output.folder = "new_all", data.source = "AEMET") {
   C_MONTH <<- "month"
   C_DAY <<- "day"
   
-  dataFiles <<- "data"
+  dataFiles <<- "data_raw"
   
   if (data.source == "AEMET") {
-    dataOutFiles <<- file.path(output.folder, "out_files")
+    dataOutFiles <<- file.path(output.folder, "data_QC")
   } else {
-    dataOutFiles <<- file.path(output.folder, paste("out_files", data.source, sep="_"))
+    dataOutFiles <<- file.path(output.folder, paste("data_QC", data.source, sep="_"))
   }
   
 }

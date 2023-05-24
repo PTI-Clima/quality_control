@@ -22,8 +22,8 @@ test_that("the function throws an error when the climatalogical variables are a 
 test_that("the function generates the correct output file", {
   setwd("../../")
   init.variables()
-  vars = "r"
-  output.file <- "new_all/out_files/r_ok.rds"
+  vars = "w"
+  output.file <- "data_QC/metadata/w_ok.rds"
   exists <- file.exists(output.file)
   if (!exists){
     qc.apply(vars)
@@ -31,11 +31,3 @@ test_that("the function generates the correct output file", {
   }
   expect_true(exists)
 })
-
-# test_that("the function is able to calculate tmin if var = t", {
-#   init.variables()
-#   vars = "t"
-#   qc.apply(vars = vars, output.folder = "new_all", data.source = "AEMET")
-#   x = load(paste(dataOutFiles, sep = "", "/tmin"))
-#   expect_s3_class(x, "data.frame")
-# })

@@ -11,7 +11,7 @@ test_that("the function generates the correct output file", {
   setwd("../../")
   init.variables()
   vars = "w"
-  output.file <- "new_all/out_files/w_ok.rds"
+  output.file <- "data_QC/metadata/w_ok.rds"
   exists <- file.exists(output.file)
   if (!exists){
     qc.apply(vars)
