@@ -41,8 +41,8 @@ options: it can be "AEMET" or "SIAR".
 - `vars`: A string or vector of strings containing the name of the climatological 
 variable to apply quality controls to. It must be one of the following: "tmax" 
 (maximum temperature), "tmin"(minimum temperature), "w" (wind), "hr" 
-(relative humidity), "pr" (precipitation), "in" (insolation), "td" (temperature),
-"ra" (radiation), "p" (pressure).
+(relative humidity), "pr" (precipitation), "in" (insolation), "td" (dew
+point temperature), "t" (temperature), "ra" (radiation), "p" (pressure).
 
 ---
 ## Installation
@@ -85,11 +85,12 @@ http://dx.doi.org/10.14198/XCongresoAECAlicante2016-38.
 ```{r}
 ## Not run:
 
-original_root <- normalizePath(file.path(getwd(), ".."))  # Getting the original directory path
-setwd(original_root)  # Setting the original directory as the working directory
-if (!(dir.exists("../data"))){
-  dir.create("../data")
+# The function reads the data from a folder named "data_raw" so, if it does not 
+# exists, it is necessary to create one and put the data inside 
+if (!dir.exists("data_raw")) {
+  dir.create("data_raw")
 }
+
 # Create the data
 INDICATIVO <- rep("B013X", 200)
 AÑO <- rep(2023, 200)
@@ -99,6 +100,7 @@ HU00 <- sample(5:100, size = 200, replace = T)
 HU07 <- sample(5:100, size = 200, replace = T)
 HU13 <- sample(5:100, size = 200, replace = T)
 HU18 <- sample(5:100, size = 200, replace = T)
+
 # Transformation into a dataframe
 df <- data.frame("INDICATIVO" = INDICATIVO,
                  "AÑO" = AÑO,
@@ -108,16 +110,18 @@ df <- data.frame("INDICATIVO" = INDICATIVO,
                  "HU07" = HU07,
                  "HU13" = HU13,
                  "HU18" = HU18)
-# Exportation like a .csv or a .txt in the file /data/ (the first letter of the
+                 
+# Exportation like a .csv or a .txt in the file /data_raw/ (the first letter of the
 # climatological variable must be capitalized)
 write.table(df,
-            "../data/Humedad.csv",
+            "data_raw/Humedad.csv",
             fileEncoding = "latin1",
             row.names = F,
             quote = F,
-            sep = ";")
-# Now, we can run the function
-library(quality_control)
+            sep = ";")# Now, we can run the function
+
+# Launching the controls
+library(qualityControl)
 launch.controls(vars = "hr", data.source = "AEMET")
 
 ```
