@@ -82,6 +82,11 @@ Asociación Española de Climatología, 2016, p. 407-415
 ```{r}
 ## Not run:
 
+original_root <- normalizePath(file.path(getwd(), ".."))  # Getting the original directory path
+setwd(original_root)  # Setting the original directory as the working directory
+if (!(dir.exists("../data"))){
+  dir.create("../data")
+}
 # Create the data
 INDICATIVO <- rep("B013X", 200)
 AÑO <- rep(2023, 200)
@@ -91,26 +96,23 @@ HU00 <- sample(5:100, size = 200, replace = T)
 HU07 <- sample(5:100, size = 200, replace = T)
 HU13 <- sample(5:100, size = 200, replace = T)
 HU18 <- sample(5:100, size = 200, replace = T)
-
 # Transformation into a dataframe
 df <- data.frame("INDICATIVO" = INDICATIVO,
-"AÑO" = AÑO,
-"MES" = MES,
-"DIA" = DIA,
-"HU00" = HU00,
-"HU07" = HU07,
-"HU13" = HU13,
-"HU18" = HU18)
-
-# Exportation like a .csv or a .txt in the file \data\ (the first letter of the
-climatological variable must be capitalized)
+                 "AÑO" = AÑO,
+                 "MES" = MES,
+                 "DIA" = DIA,
+                 "HU00" = HU00,
+                 "HU07" = HU07,
+                 "HU13" = HU13,
+                 "HU18" = HU18)
+# Exportation like a .csv or a .txt in the file /data/ (the first letter of the
+# climatological variable must be capitalized)
 write.table(df,
-          "~/data/Humedad.csv",
-          fileEncoding = "latin1",
-          row.names = F,
-          quote = F,
-          sep = ";")
-
+            "../data/Humedad.csv",
+            fileEncoding = "latin1",
+            row.names = F,
+            quote = F,
+            sep = ";")
 # Now, we can run the function
 library(quality_control)
 launch.controls(vars = "hr", data.source = "AEMET")
