@@ -88,7 +88,7 @@ lectura_datos_siar_var = function(a, var) {
   file.name = var
   if (var == C_RA) {
     col.name = ""
-    # file.name = C_R
+    file.name = C_RA
   } else{
     if (var == C_PP) {
       col.name = "P"
@@ -107,7 +107,7 @@ lectura_datos_siar_var = function(a, var) {
       full.names = TRUE,
       recursive = TRUE
     )
-  files <- files[grepl(var, files)]
+  files <- files[grepl(paste0(var,".csv"), files)]
   files <- files[!grepl("coor", files)]
   files <- files[!grepl("Descripcion", files)]
   if(length(files)>0){
