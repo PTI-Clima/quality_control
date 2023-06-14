@@ -88,16 +88,16 @@ lectura_datos_siar_var = function(a, var) {
   file.name = var
   if (var == C_RA) {
     col.name = ""
-    file.name = C_R
+    # file.name = C_R
   } else{
     if (var == C_PP) {
       col.name = "P"
-      file.name = C_PR
+      # file.name = C_PR
     }
   }
 
   if (is.na(a)) {
-    a = "files_data"
+    a = "data_raw/SIAR"
   }
 
   files <-
@@ -467,8 +467,8 @@ ficheroDistanciasLeer = function() {
   crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
   crs30 = "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
 
-  dist1 = read.csv("files_data/28c.txt", sep = ";")[, c(1:5)]
-  dist2 = read.csv("files_data/30c.txt", sep = ";")[, c(1:5)]
+  dist1 = read.csv("data_raw/SIAR/28c.txt", sep = ";")[, c(1:5)]
+  dist2 = read.csv("data_raw/SIAR/30c.txt", sep = ";")[, c(1:5)]
 
   est_sp1 <- dist1
   sp::coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
