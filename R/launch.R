@@ -17,10 +17,10 @@ year.new.dir.calc = function(year.new) {
     if(nchar(year.new) <= 4){ # year
       year.new.dir = year.new
     }else{ # day
-      year.new.dir = "data_QC"
+      year.new.dir = paste0("data_QC/", data.source)
     }
   } else{ # NA
-    year.new.dir = "data_QC"
+    year.new.dir = paste0("data_QC/", data.source)
   }
   return(year.new.dir)
 }
@@ -134,14 +134,13 @@ prepare.data <- function(name.type) {
 #'
 #' @param vars Character vector of variable types to apply QC to
 #' @param input.folder Character string of the input data folder path
-#' @param output.folder Character string of the output data folder path
 #' @param data.source Character string indicating the data source (default is "AEMET")
 #'
 #' @return None
 #' @import chron lattice Rcpp reshape reshape2 Hmisc sp
 #'
 #' @export
-qc.apply <- function(vars, output.folder = "data_QC", data.source = "AEMET") {
+qc.apply <- function(vars, data.source = "AEMET") {
   
   # Parameters check ###########################################################
   
@@ -156,7 +155,7 @@ qc.apply <- function(vars, output.folder = "data_QC", data.source = "AEMET") {
   # Variables pre-proccessing ##################################################
   
   if (!exists(C_AEMET)){
-    init.variables(output.folder = output.folder)
+    init.variables(data.source = data.source)
   }
   
   data_source <<- data.source
@@ -189,7 +188,7 @@ qc.apply <- function(vars, output.folder = "data_QC", data.source = "AEMET") {
 #' 
 #' @noRd
 #'
-init.variables <- function(output.folder = "data_QC", data.source = "AEMET") {
+init.variables <- function(data.source = "AEMET") {
   
   C_TMAX <<- "tmax" #temperatura máxima
   C_TMIN <<- "tmin" #temperatura mínima
@@ -219,6 +218,7 @@ init.variables <- function(output.folder = "data_QC", data.source = "AEMET") {
   
   dataFiles <<- "data_raw"
   
+  output.folder <- paste0("data_QC/", data.source)
   if (data.source == "AEMET") {
     dataOutFiles <<- file.path(output.folder, "metadata")
   } else {
