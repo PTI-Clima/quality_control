@@ -17,10 +17,10 @@ year.new.dir.calc = function(year.new) {
     if(nchar(year.new) <= 4){ # year
       year.new.dir = year.new
     }else{ # day
-      year.new.dir = paste0("data_QC/", data.source)
+      year.new.dir = paste0("data_QC/", data_source)
     }
   } else{ # NA
-    year.new.dir = paste0("data_QC/", data.source)
+    year.new.dir = paste0("data_QC/", data_source)
   }
   return(year.new.dir)
 }
