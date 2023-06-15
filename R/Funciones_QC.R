@@ -161,7 +161,7 @@ lectura_datos_siar_var = function(a, var) {
           if (var == C_RA) {
             t.csv[, -c(1:3)] = 100 * t.csv[, -c(1:3)]
           } else{
-            if (var != C_HR) {
+            if (var != C_HR & var != C_INS) {
               # var = C_HR # %
               stop('Variable incorrecta')
             }
