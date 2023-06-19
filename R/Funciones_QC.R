@@ -1096,8 +1096,8 @@ n_dias_duplicados <- function(data, meta) {
   }
   dupl <- dupl_2
   metadatos_6_dias_duplicados <- meta
-  save.data(dupl, file = 'Duplicados/6_dias/duplicados_a_6_dias.RData')
-  save.data(metadatos_6_dias_duplicados, file = 'Duplicados/6_dias/metadatos_6_dias_duplicados.RData')
+  save.data(dupl, file = 'Duplicados/6_dias/pp_duplicados_a_6_dias.RData')
+  save.data(metadatos_6_dias_duplicados, file = 'Duplicados/6_dias/pp_metadatos_6_dias_duplicados.RData')
 }
 
 #' busca meses con las mismas cantidades de lluvia, aunque no esten en el mismo orden
@@ -1204,11 +1204,11 @@ offset_duplicated_rain <- function(data,
 
   metadatos_offset <- meta
   if (pasada == 2) {
-    save.data(dupl_lluvia, file = 'Duplicados/Offset/duplicados_con_offset_pasada2.RData')
-    save.data(metadatos_offset, file = 'Duplicados/Offset/metadatos_offset_pasada2.RData')
+    save.data(dupl_lluvia, file = 'Duplicados/Offset/pp_duplicados_con_offset_pasada2.RData')
+    save.data(metadatos_offset, file = 'Duplicados/Offset/pp_metadatos_offset_pasada2.RData')
   } else {
-    save.data(dupl_lluvia, file = 'Duplicados/Offset/duplicados_con_offset.RData')
-    save.data(metadatos_offset, file = 'Duplicados/Offset/metadatos_offset.RData')
+    save.data(dupl_lluvia, file = 'Duplicados/Offset/pp_duplicados_con_offset.RData')
+    save.data(metadatos_offset, file = 'Duplicados/Offset/pp_metadatos_offset.RData')
   }
 }
 

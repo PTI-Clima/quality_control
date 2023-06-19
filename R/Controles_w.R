@@ -196,7 +196,7 @@ contol_w <- function(U10, metadatos_originales_U10) {
   }
   save.data(
     metadatos_aberrantes,
-    file = ('Aberrantes/Paso 1/metadatos_aberrantes_diarios.RData')
+    file = ('Aberrantes/Paso 1/w_metadatos_aberrantes_diarios.RData')
   )
   U10_diario <- eliminar_datos(U10_diario, metadatos_aberrantes)
   save.data(U10_diario, file = 'Aberrantes/Paso 1/w_diario_sin_aberrantes.RData')
@@ -235,7 +235,7 @@ contol_w <- function(U10, metadatos_originales_U10) {
     rm(metadatos_aberrantes_propios_18)
   }
   metadatos_aberrantes_propios[, 1:3] <- U10_diario[, 1:3]
-  save.data(metadatos_aberrantes_propios, file = 'Aberrantes/Paso 2/metadatos_aberrantes_propios.RData')
+  save.data(metadatos_aberrantes_propios, file = 'Aberrantes/Paso 2/w_metadatos_aberrantes_propios.RData')
   U10_diario <-
     eliminar_datos(U10_diario, metadatos_aberrantes_propios)
   rm(metadatos_aberrantes_propios)

@@ -113,16 +113,17 @@ prepare.data <- function(name.type) {
   # Eliminar 'de los nombres para evitar problemas en lecturas (Se pierden datos en lectura sin avisar según como se lea)
   coor[, "NOMBRE"] = gsub("'", " ", as.character(coor[, "NOMBRE"]))
   
+  f <- file.path(folder, "data_sort", paste0(name.type, ".csv.gz"))
   write.table(
     data.daily,
-    file = file.path(folder, "data_sort", paste0(name.type, ".csv")), sep = ";")
+    file = gzfile(f, 'w'), 
+    sep = ";"
+  )
+  
+  f <- file.path(folder, "data_coor", paste0(name.type, ".csv.gz"))
   write.table(
     coor,
-    file = file.path(
-      folder,
-      "data_coor",
-      paste0(name.type, ".csv")
-    ),
+    file = gzfile(f, 'w'),
     sep = ";",
     row.names = FALSE
   )
@@ -216,7 +217,7 @@ init.variables <- function(data.source = "AEMET") {
   C_MONTH <<- "month"
   C_DAY <<- "day"
   
-  dataFiles <<- "data_raw"
+  dataFiles <<- paste0("data_raw/", data.source)
   
   output.folder <- paste0("data_QC/", data.source)
   dataOutFiles <<- file.path(output.folder, "metadata")
