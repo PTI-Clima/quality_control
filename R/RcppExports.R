@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 main_deteccion_duplicados <- function(fileOpen, min, max, ncol) {
-    .Call('_qualityControl_main_deteccion_duplicados', PACKAGE = 'qualityControl', fileOpen, min, max, ncol)
+    .Call(`_qualityControl_main_deteccion_duplicados`, fileOpen, min, max, ncol)
 }
 
