@@ -16,7 +16,7 @@ Authors@R: c(
 	person('Marcos', 'Gil-Guallar', role=c('aut'),
 	email='mgil@eead.csic.es'),
 	person('Alejandro', 'Royo-Aranda', role=c('aut'),
-	email='aroyo@ipe.csic.es')
+	email='a.royo@ipe.csic.es')
 	)
 Maintainer: Santiago Beguería <santiago.begueria@csic.es>
 Imports: chron, lattice, Rcpp, reshape, reshape2, Hmisc, plyr, sp
