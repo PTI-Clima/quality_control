@@ -64,7 +64,14 @@ You can generate it in your profile page.
 - First version on GitHub, based on the work that Miquel Tomás did back in 2016  
 - Giving package structure  
 - Implementation of test functions  
-- Update README with installation instructions  
+- Update README with installation instructions
+
+### Version 1.1.0, June 2023. 
+
+1. Organize input and output paths to distinguish between AEMET and SIAR data.
+2. Write output files in compressed format (.gz).
+3. Fix a problem with some metadata files that were overwriting each other.
+4. Fix a bug with radiation quality control process.
 
 ---
 
