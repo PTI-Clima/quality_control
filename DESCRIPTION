@@ -1,14 +1,23 @@
 Package: qualityControl
 Type: Package
-Version: 0.1.0
+Version: 1.1.0
 Date: 2023-04-10
 Title: Quality control
-Author: Miquel Tomas-Burguera [aut, cre] <miquel.tomas@gmail.com>,
-        Borja Latorre Garcés [aut] <borja.latorre@csic.es>,
-        Fergus Reig Gracia [aut] <fergus@ipe.csic.es>,
-        Santiago Beguería [aut, cre] <santiago.begueria@csic.es>,
-        Marcos Gil Guallar [aut, cre],
-        Alejandro Royo Aranda [aut, cre]
+Authors@R: c(
+	person('Santiago', 'Beguería', role=c('aut','cre'),
+	email='santiago.begueria@csic.es',
+	comment=c(ORCID='0000-0002-3974-2947')),
+	person('Miquel', 'Tomas-Burguera', role=c('aut'),
+	email='miquel.tomas@gmail.com'),
+	person('Borja', 'Latorre', role=c('aut'),
+	email='borja.latorre@csic.es'),
+	person('Fergus', 'Reig', role=c('aut'),
+	email='fergus@ipe.csic.es'),
+	person('Marcos', 'Gil-Guallar', role=c('aut'),
+	email='mgil@eead.csic.es'),
+	person('Alejandro', 'Royo-Aranda', role=c('aut'),
+	email='aroyo@ipe.csic.es')
+	)
 Maintainer: Santiago Beguería <santiago.begueria@csic.es>
 Imports: chron, lattice, Rcpp, reshape, reshape2, Hmisc, plyr, sp
 Depends: R (>= 3.5.0)
