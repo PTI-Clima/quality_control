@@ -73,6 +73,10 @@ You can generate it in your profile page.
 3. Fix a problem with some metadata files that were overwriting each other.
 4. Fix a bug with radiation quality control process.
 
+### Version 1.1.1, June 2023. 
+
+1. Fix a mistake in the contact email of one contributor.
+
 ---
 
 ## References  
