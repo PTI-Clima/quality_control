@@ -1243,7 +1243,7 @@ agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
       metadatos_duplicados_combinados[metadatos_intradecenas_duplicadas ==
                                         2] <- 2
 
-      load.data(file = 'Duplicados/6_dias/metadatos_6_dias_duplicados.RData')
+      load.data(file = 'Duplicados/6_dias/pp_metadatos_6_dias_duplicados.RData')
       metadatos_duplicados_combinados[metadatos_6_dias_duplicados == 2] <-
         2
 
@@ -1275,7 +1275,7 @@ agrupar_metadatos_duplicados <- function(metadatos, var, pasada = 1) {
       load.data(file = 'Duplicados/Intradecenas/metadatos_intradecenas_pp.RData')
       metadatos[metadatos_intradecenas_duplicadas == 2] <- 2
 
-      load.data(file = 'Duplicados/Offset/metadatos_offset.RData')
+      load.data(file = 'Duplicados/Offset/pp_metadatos_offset.RData')
       metadatos[metadatos_offset == 2] <- 2
     }
 

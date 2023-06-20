@@ -1,8 +1,8 @@
 Package: qualityControl
 Type: Package
-Version: 1.1.0
+Version: 1.1.1
 Date: 2023-04-10
-Title: Quality control
+Title: Daily quality control on the raw input data
 Authors@R: c(
 	person('Santiago', 'Beguería', role=c('aut','cre'),
 	email='santiago.begueria@csic.es',
@@ -21,7 +21,10 @@ Authors@R: c(
 Maintainer: Santiago Beguería <santiago.begueria@csic.es>
 Imports: chron, lattice, Rcpp, reshape, reshape2, Hmisc, plyr, sp
 Depends: R (>= 3.5.0)
-Description: Daily quality control on the raw input data
+Description: This package is in charge of the first part of the climatic variables data flow. The input data comes from two different sources:
+AEMET (Spanish Meteorological Agency)
+SIAR (Spanish Agro-Climatic Information System for Irrigation)
+Several quality controls are performed over the different input variables. For more information you can read the pdf file in this repo.
 License: GPL (>= 3)
 URL: https://lcsc.csic.es
 LazyLoad: no

@@ -252,8 +252,8 @@ metadata_w = function() {
   rename_metadata(C_W)
   
   load.data(file = 'Consecutivos/Paso 1/Consecutivos_w.RData')
-  load.data(file = 'Aberrantes/Paso 1/metadatos_aberrantes_diarios.RData')
-  load.data(file = 'Aberrantes/Paso 2/metadatos_aberrantes_propios.RData')
+  load.data(file = 'Aberrantes/Paso 1/w_metadatos_aberrantes_diarios.RData')
+  load.data(file = 'Aberrantes/Paso 2/w_metadatos_aberrantes_propios.RData')
   metadatos_final_resto <-
     metadatos_consecutivos_U10 + metadatos_aberrantes_propios
   save.data(metadatos_final_resto, file = 'Metadatos_finales/metadatos_resto_w.RData')

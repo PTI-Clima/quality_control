@@ -236,7 +236,7 @@ contol_hr <- function(RH, metadatos_originales_RH) {
   }
   save.data(
     metadatos_aberrantes,
-    file = ('Aberrantes/Paso 1/metadatos_aberrantes_diarios.RData')
+    file = ('Aberrantes/Paso 1/hr_metadatos_aberrantes_diarios.RData')
   )
   RH_diario <- eliminar_datos(RH_diario, metadatos_aberrantes)
   rm(metadatos_aberrantes)
@@ -258,7 +258,7 @@ metadata_hr = function() {
     load.data(file = 'Consecutivos/Paso 1/Consecutivos_hr.RData')
   }
   load.data(file = 'Consecutivos/Paso 3/100_nas.RData')
-  load.data(file = 'Aberrantes/Paso 1/metadatos_aberrantes_diarios.RData')
+  load.data(file = 'Aberrantes/Paso 1/hr_metadatos_aberrantes_diarios.RData')
   
   # metadatos_final_resto <- metadatos_consecutivos + metadatos_poca_variacion + metadatos_100_nas + metadatos_aberrantes #CORREGIDO_MTOMAS
   # metadatos_final_resto[,1:3] <- metadatos_consecutivos[,1:3]
