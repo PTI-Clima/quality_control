@@ -39,10 +39,9 @@ variable temperature. For more information, write on the console: `help(Termo)`.
 options: it can be "AEMET" or "SIAR".
 
 - `vars`: A string or vector of strings containing the name of the climatological 
-variable to apply quality controls to. It must be one of the following: "tmax" 
-(maximum temperature), "tmin"(minimum temperature), "w" (wind), "hr" 
-(relative humidity), "pr" (precipitation), "in" (insolation), "td" (dew
-point temperature), "t" (temperature), "ra" (radiation), "p" (pressure).
+variable to apply quality controls to. It must be one of the following: "t" 
+(temperature), "w" (wind), "hr" (relative humidity), "pr" (precipitation), 
+"in" (insolation), "t" (temperature), "ra" (radiation), "p" (pressure).
 
 ---
 ## Installation

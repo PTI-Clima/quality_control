@@ -459,23 +459,30 @@ lectura_datos_aemet <- function(a, var) {
 }
 
 #' Lee archivos de distancias y homogeneiza las coordenadas
+#' @import sf
 #'
-#' @return matrizde datos
+#' @return matriz de datos
 #'
 #'
-ficheroDistanciasLeer = function() {
-  crs28 = "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
-  crs30 = "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
-
-  dist1 = read.csv("data_raw/SIAR/28c.txt", sep = ";")[, c(1:5)]
-  dist2 = read.csv("data_raw/SIAR/30c.txt", sep = ";")[, c(1:5)]
-
-  est_sp1 <- dist1
-  sp::coordinates(est_sp1) <- c('UTM.X', 'UTM.Y')
-  sp::proj4string(est_sp1) <- crs28
-  est_sp1 <- sp::spTransform(est_sp1, sp::CRS(crs30))
-  dist1[, c("UTM.X", "UTM.Y")] = est_sp1@coords
-  dist = rbind(dist1, dist2)
+ficheroDistanciasLeer1 = function() {
+  
+  crs28 <- "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
+  crs30 <- "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
+  
+  dist1 <- read.csv("data_raw/SIAR/28c.txt", sep = ";")[, c(1:5)]
+  dist2 <- read.csv("data_raw/SIAR/30c.txt", sep = ";")[, c(1:5)]
+  
+  # Transform the object est_sp1 from one map projection to another
+  est_sp1 <- sf::st_as_sf(dist1, coords = c('UTM.X', 'UTM.Y'), crs = crs28)
+  est_sp1 <- sf::st_transform(est_sp1, crs30)
+  
+  coord <- st_coordinates(est_sp1)
+  
+  # Assign the coordinates to the dataframe dist1  
+  dist1$UTM.X <- coord[, "X"]
+  dist1$UTM.Y <- coord[, "Y"]
+  
+  dist1 = rbind(dist1, dist2)
   dist = dist[dist[, "Base"] == C_SIAR,]
   dist = cbind(dist, array(NA, dim = c(dim(dist)[1], 3)))
   dist = dist[c(1, 6, 7, 2, 3, 4, 5, 8)]
@@ -493,13 +500,13 @@ ficheroDistanciasLeer = function() {
   dist["LONGITUD"] = NA
   
   crslonlat <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-
+  
   est_sp <- dist
   sp::coordinates(est_sp) <- c('C_X', 'C_Y')
   sp::proj4string(est_sp) <- crs30
   est_sp = sp::spTransform(est_sp, sp::CRS(crslonlat))
   dist[, c("LONGITUD", "LATITUD")] = est_sp@coords
-
+  
   return(dist)
 }
 
