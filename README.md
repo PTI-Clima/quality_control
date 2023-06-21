@@ -76,6 +76,11 @@ You can generate it in your profile page.
 
 1. Fix a mistake in the contact email of one contributor.
 
+### Version 1.2.0, June 2023
+
+1. Change an internal library function that reads and projects station coordinates 
+to stop using `rgdal` and `rgeos` dependencies.
+
 ---
 
 ## References  
