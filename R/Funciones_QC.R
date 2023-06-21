@@ -464,7 +464,7 @@ lectura_datos_aemet <- function(a, var) {
 #' @return matriz de datos
 #'
 #'
-ficheroDistanciasLeer1 = function() {
+ficheroDistanciasLeer = function() {
   
   crs28 <- "+proj=utm +zone=28 +ellps=intl +units=m +no_defs"
   crs30 <- "+proj=utm +zone=30 +ellps=intl +units=m +no_defs"
@@ -482,7 +482,7 @@ ficheroDistanciasLeer1 = function() {
   dist1$UTM.X <- coord[, "X"]
   dist1$UTM.Y <- coord[, "Y"]
   
-  dist1 = rbind(dist1, dist2)
+  dist = rbind(dist1, dist2)
   dist = dist[dist[, "Base"] == C_SIAR,]
   dist = cbind(dist, array(NA, dim = c(dim(dist)[1], 3)))
   dist = dist[c(1, 6, 7, 2, 3, 4, 5, 8)]
