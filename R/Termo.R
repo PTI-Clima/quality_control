@@ -1,7 +1,7 @@
 #' @name Termo
 #' @alias Termo
 #' @title Temperature records in Spain
-#' @description This is a little sample of data which contains information about the temperature measured by six weather stations in the Balearic Islands (Spain). The dataframe is formed by 6083 observations and 72 variables corresponding to more than 5 years (62 months). The temperature is measured in degrees Celsius multiplied by ten to avoid decimals.
+#' @description This is a little sample of data which contains information about the temperature measured by six weather stations in Spain. The dataframe is formed by 6083 observations and 72 variables corresponding to the year 2022. The temperature is measured in degrees Celsius multiplied by ten to avoid decimals. It is worth mentioning that these data are invented, they do not correspond to real data. The aim is simply to have an example dataframe with similar characteristics to a real one. 
 #' @format A dataframe with 6083 rows and 72 variables.
 #' @usage data(Termo)
 #' @section Details:
@@ -13,8 +13,8 @@
 #'      \item{MES: }{The month of the recording}
 #'      \item{NOMBRE: }{The name of the weather station}
 #'      \item{ALTITUD: }{The elevation of each station}
-#'      \item{C_X: }{The X UTM coordinates of the weather station}
-#'      \item{C_Y: }{The Y UTM coordinates of the weather station}
+#'      \item{C_X: }{The X UTM coordinates of the weather station. The reference system is ETRS89. Data are measured in metres.}
+#'      \item{C_Y: }{The Y UTM coordinates of the weather station. The reference system is ETRS89. Data are measured in metres.}
 #'      \item{NOM_PROV: }{The name of the province where the station is located}
 #'      \item{LONGITUD: }{The longitude coordinates of the weather station}
 #'      \item{LATITUD: }{The longitude coordinates of the weather station}
@@ -24,11 +24,18 @@
 #'  }
 #'  
 #'  \source{
-#'    The data has been extracted from a small dataset made as example coming from the Spanish Meteorological Agency. For more information, visit the following link:
-#'      \url{https://www.aemet.es/es/portada}
+#'    TThese data are a simulation of real data from AEMET, carried out by the LCSC (CSIC) in the context of a joint project on research and analysis of climate data. For more information, visit the following link:
+#'      \url{https://lcsc.csic.es/es/lcsc/}
 #'  }
 #'  
 #' @examples
 #' my_dataframe <- qualityControl::Termo
 #' 
-"Termo"
+read.table(
+  paste("data/Termo.csv", sep = ""),
+  sep = ";",
+  header = T,
+  encoding = 'latin1',
+  quote = ''
+)
+     

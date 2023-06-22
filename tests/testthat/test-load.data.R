@@ -8,7 +8,7 @@ library(testthat)
 # ---------------------------------------------------------------------------- #
 
 test_that("the load.data function is able to load objects and files correctly",{
-  init.variables("data_QC")
+  init.variables()
   set.seed(123)
   x <- rnorm(10)
   save(x,file = paste(dataOutFiles, sep = "", "/save_data2.RData"))

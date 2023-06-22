@@ -81,6 +81,10 @@ You can generate it in your profile page.
 1. Change an internal library function that reads and projects station coordinates 
 to stop using `rgdal` and `rgeos` dependencies.
 
+### Version 1.2.1, June 2023
+
+1. Update tests to work with last releases.
+
 ---
 
 ## References  

@@ -158,9 +158,7 @@ qc.apply <- function(vars, data.source = "AEMET") {
   if (!exists(C_AEMET)){
     init.variables(data.source = data.source)
   }
-  
-  data_source <<- data.source
-  
+    
   # Launch mtomas code #########################################################
   
   for (type in vars) {
@@ -221,6 +219,8 @@ init.variables <- function(data.source = "AEMET") {
   
   output.folder <- paste0("data_QC/", data.source)
   dataOutFiles <<- file.path(output.folder, "metadata")
+
+  data_source <<- data.source
   
 }
 

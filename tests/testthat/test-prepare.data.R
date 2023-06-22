@@ -24,5 +24,5 @@ test_that("The function creates the correct output files", {
   init.variables()
   var <- "r"
   prepare.data(var)
-  expect_true(file.exists("data_QC/data_coor/r.csv") & file.exists("data_QC/data_sort/r.csv"))
+  expect_true(file.exists("data_QC/AEMET/data_coor/r.csv.gz") & file.exists("data_QC/AEMET/data_sort/r.csv.gz"))
 })

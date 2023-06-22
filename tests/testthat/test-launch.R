@@ -5,7 +5,7 @@ library(testthat)
 test_that("if year.new is NA, the function returns data_QC", {
   year.new <- NA
   x <- year.new.dir.calc(year.new)
-  expect_equal(x, "data_QC")
+  expect_equal(x, "data_QC/AEMET")
 })
 
 
@@ -19,7 +19,7 @@ test_that("if nchar(year.new) is <= 4, input = output", {
 test_that("if nchar(year.new) is > 4, year.new.dir = data_QC", {
   year.new <- "2023-04-19"
   x <- year.new.dir.calc(year.new)
-  expect_equal(x, "data_QC")
+  expect_equal(x, "data_QC/AEMET")
 })
 
 # ------ Prepare data ------- #
