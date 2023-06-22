@@ -49,20 +49,20 @@ contol_ins <- function(ins, metadatos_originales_ins) {
   ##################################################################
   load.data(file = 'Duplicados/ins_sin_duplicados_formato_ancho.RData')
   
-  detectar_consecutivos(ins, metadatos_originales_ins_ancho, var = C_INS)
-  metadatos_consecutivos_ins <-
-    max_mobil(ins,
-              metadatos_originales_ins_ancho,
-              C = 25,
-              D = 20)
-  rm(metadatos_consecutivos_ins)
+  # detectar_consecutivos(ins, metadatos_originales_ins_ancho, var = C_INS)
+  # metadatos_consecutivos_ins <-
+  #   max_mobil(ins,
+  #             metadatos_originales_ins_ancho,
+  #             C = 25,
+  #             D = 20)
+  # rm(metadatos_consecutivos_ins)
   
   load.data(file = 'Consecutivos/Paso 1/Consecutivos_ins.RData')
   ins <- eliminar_datos(ins, metadatos_consecutivos)
   
-  load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
-  ins <- eliminar_datos(ins, metadatos_consecutivos)
-  rm(metadatos_consecutivos)
+  # load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
+  # ins <- eliminar_datos(ins, metadatos_consecutivos, "wakala6")
+  # rm(metadatos_consecutivos)
   
   ##################################
   ########### ABERRANTES ###########
