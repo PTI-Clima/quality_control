@@ -1,6 +1,6 @@
 Package: qualityControl
 Type: Package
-Version: 1.2.0
+Version: 1.2.1
 Date: 2023-06-21
 Title: Daily quality control on the raw input data
 Authors@R: c(
