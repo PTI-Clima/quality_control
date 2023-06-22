@@ -27,15 +27,14 @@
 #'    TThese data are a simulation of real data from AEMET, carried out by the LCSC (CSIC) in the context of a joint project on research and analysis of climate data. For more information, visit the following link:
 #'      \url{https://lcsc.csic.es/es/lcsc/}
 #'  }
-#'  
+#' @export
+#' 
 #' @examples
 #' my_dataframe <- qualityControl::Termo
 #' 
-read.table(
-  paste("data/Termo.csv", sep = ""),
+Termo <- read.table(
+  "data/Termo.csv",
   sep = ";",
   header = T,
-  encoding = 'latin1',
-  quote = ''
-)
-     
+  encoding = 'latin-1',
+  quote = '')

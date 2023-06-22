@@ -48,8 +48,8 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-data_raw/
-!data/Termo.RData
+data/
+!data/Termo.csv
 AEMET/
 data_QC/
 *.Rproj
