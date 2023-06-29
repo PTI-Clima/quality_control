@@ -113,17 +113,17 @@ prepare.data <- function(name.type) {
   # Eliminar 'de los nombres para evitar problemas en lecturas (Se pierden datos en lectura sin avisar según como se lea)
   coor[, "NOMBRE"] = gsub("'", " ", as.character(coor[, "NOMBRE"]))
   
-  f <- file.path(folder, "data_sort", paste0(name.type, ".csv.gz"))
+  f <- file.path(folder, "data_sort", paste0(name.type, ".csv"))
   write.table(
     data.daily,
-    file = gzfile(f, 'w'), 
+    file = f, 
     sep = ";"
   )
   
-  f <- file.path(folder, "data_coor", paste0(name.type, ".csv.gz"))
+  f <- file.path(folder, "data_coor", paste0(name.type, ".csv"))
   write.table(
     coor,
-    file = gzfile(f, 'w'),
+    file = f,
     sep = ";",
     row.names = FALSE
   )
