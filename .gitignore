@@ -54,6 +54,7 @@ AEMET/
 data_QC/
 *.Rproj
 *.pper
+data_raw/
 
 
 # Ficheros R compilados

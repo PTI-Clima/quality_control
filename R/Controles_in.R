@@ -57,8 +57,8 @@ contol_ins <- function(ins, metadatos_originales_ins) {
   #             D = 20)
   # rm(metadatos_consecutivos_ins)
   
-  load.data(file = 'Consecutivos/Paso 1/Consecutivos_ins.RData')
-  ins <- eliminar_datos(ins, metadatos_consecutivos)
+  # load.data(file = 'Consecutivos/Paso 1/Consecutivos_ins.RData')
+  # ins <- eliminar_datos(ins, metadatos_consecutivos)
   
   # load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
   # ins <- eliminar_datos(ins, metadatos_consecutivos, "wakala6")
@@ -85,10 +85,10 @@ contol_ins <- function(ins, metadatos_originales_ins) {
 metadata_ins = function() {
   rename_metadata(C_INS)
   
-  load.data(file = 'Consecutivos/Paso 1/Consecutivos_ins.RData')
-  metadatos_consecutivos_0 <- metadatos_consecutivos
-  
-  load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
+  # load.data(file = 'Consecutivos/Paso 1/Consecutivos_ins.RData')
+  # metadatos_consecutivos_0 <- metadatos_consecutivos
+  # 
+  # load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
   load.data(file = 'Aberrantes/metadatos_aberrantes_ins.RData')
   metadatos_final_resto <-
     metadatos_consecutivos_0 + metadatos_consecutivos + metadatos_aberrantes
