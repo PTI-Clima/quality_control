@@ -90,8 +90,8 @@ metadata_ins = function() {
   # 
   # load.data(file = 'Consecutivos/Paso 2/Consecutivos_ins.RData')
   load.data(file = 'Aberrantes/metadatos_aberrantes_ins.RData')
-  metadatos_final_resto <-
-    metadatos_consecutivos_0 + metadatos_consecutivos + metadatos_aberrantes
+  metadatos_final_resto <- metadatos_aberrantes #+
+    #metadatos_consecutivos_0 + metadatos_consecutivos
   save.data(metadatos_final_resto, file = 'Metadatos_finales/metadatos_resto_ins.RData')
   
   delete_metadata()
