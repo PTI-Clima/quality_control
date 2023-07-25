@@ -319,7 +319,7 @@ correctUnits = function(series,type){
     return(NA)
   }
   else if (type == C_IN | type == C_PR |
-           type == C_MIN | type == C_TMAX){
+           type == C_TMIN | type == C_TMAX){
     series <- series / 10
   }
   else if (type == C_W){
