@@ -502,10 +502,14 @@ ficheroDistanciasLeer = function() {
   crslonlat <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
   
   est_sp <- dist
-  sp::coordinates(est_sp) <- c('C_X', 'C_Y')
-  sp::proj4string(est_sp) <- crs30
-  est_sp = sp::spTransform(est_sp, sp::CRS(crslonlat))
-  dist[, c("LONGITUD", "LATITUD")] = est_sp@coords
+  
+  # Transform the object est_sp1 from one map projection to another
+  est_sp <- sf::st_as_sf(est_sp, coords = c('C_X', 'C_Y'), crs = crs30)
+  est_sp <- sf::st_transform(est_sp, crslonlat)
+  coord <- st_coordinates(est_sp)
+  # Assign the coordinates to the dataframe dist  
+  dist$LONGITUD <- coord[, "X"]
+  dist$LATITUD <- coord[, "Y"]
   
   return(dist)
 }
