@@ -43,8 +43,8 @@ humedad:
   do:
     trial: FALSE
   var:
-    names: c("HU00", "HU07", "HU13", "HU18", "HUMAX", "HUMIN")
-    units: c("%", "%", "%", "%", "%", "%")
+    names: !expr c("HU00", "HU07", "HU13", "HU18", "HUMAX", "HUMIN")
+    units: !expr c("%", "%", "%", "%", "%", "%")
     limits:
       lower: !expr 0
       upper: !expr 100
@@ -55,8 +55,8 @@ presion:
   do:
     trial: FALSE
   var:
-    names: c("PRES00", "PRES07", "PRES13", "PRES18", "PRESMAX", "PRESMIN")
-    units: c("1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa")
+    names: !expr c("PRES00", "PRES07", "PRES13", "PRES18", "PRESMAX", "PRESMIN")
+    units: !expr c("1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa")
     limits:
       lower: !expr 0
       upper: !expr Inf
@@ -67,8 +67,8 @@ viento_1:
   do:
     trial: FALSE
   var:
-    names: c("VEL_00", "VEL_07", "VEL_13", "VEL_18", "R_MAX_VEL")
-    units: c("Km h-1", "Km h-1", "Km h-1", "Km h-1", "Km h-1")
+    names: !expr c("VEL_00", "VEL_07", "VEL_13", "VEL_18", "R_MAX_VEL")
+    units: !expr c("Km h-1", "Km h-1", "Km h-1", "Km h-1", "Km h-1")
     limits:
       lower: !expr 0
       upper: !expr Inf
@@ -79,8 +79,8 @@ viento_2:
   do:
     trial: FALSE
   var:
-    names: c("REC24", "REC77")
-    units: c("Km", "Km")
+    names: !expr c("REC24", "REC77")
+    units: !expr c("Km", "Km")
     limits:
       lower: !expr 0
       upper: !expr Inf
@@ -91,8 +91,8 @@ viento_3:
   do:
     trial: FALSE
   var:
-    names: c("DIR_00", "DIR_07", "DIR_13", "DIR_18", "R_MAX_DIR", "R_MAX_HOR")
-    units: c("1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º")
+    names: !expr c("DIR_00", "DIR_07", "DIR_13", "DIR_18", "R_MAX_DIR", "R_MAX_HOR")
+    units: !expr c("1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º")
     limits:
       lower: !expr 0
       upper: !expr Inf
@@ -107,7 +107,7 @@ insolacion:
     units: "1/10 h"
     limits:
       lower: !expr 0
-      upper: !expr 240
+      upper: !expr 160
     
 radiacion:
   file:
@@ -115,8 +115,8 @@ radiacion:
   do:
     trial: FALSE
   var:
-    names: c("RDIRDIA", "RDIFDIA", "RGLODIA")
-    units: c("10 kJ m-2", "10 kJ m-2", "10 kJ m-2")
+    names: !expr c("RDIRDIA", "RDIFDIA", "RGLODIA")
+    units: !expr c("10 kJ m-2", "10 kJ m-2", "10 kJ m-2")
     limits:
       lower: !expr 0
       upper: !expr Inf

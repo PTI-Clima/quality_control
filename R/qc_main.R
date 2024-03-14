@@ -41,7 +41,7 @@ if (length(configuration) == 0) {
 }
 
 #   read arguments from config file
-#cnfg <- config::get(file = "./R/qc_config.yml", config = 'insolacion')
+#cnfg <- config::get(file = "./R/qc_config.yml", config = 'presion')
 cnfg <- config::get(file = "./R/qc_config.yml", config = configuration[1])
 
 
@@ -113,6 +113,7 @@ for (var in 1:length(cnfg$var$names)) {
   
   if (cnfg$do$verbose) {
     writeLines(paste0("Processing variable ",  cnfg$var$names[var], ":"))
+    writeLines("   Formatting data")
   }
 
   # We have defined a class (`qc`) to store both the data and metadata resulting
@@ -332,24 +333,28 @@ for (var in 1:length(cnfg$var$names)) {
 
   ## Global report ----
 
-  if (cnfg$do$verbose) {
-    writeLines("   Producing reports")
-  }
-  
   # Produce a global report considering all the stations in the data set.
+  
+  if (cnfg$do$verbose) {
+    writeLines("   Producing global report")
+  }
   
   rmarkdown::render(
     input = "./R/qc_report.Rmd",
     output_dir = cnfg$dir$output,
     output_file = paste0(cnfg$var$names[var], ".html"),
     envir = parent.frame(),
-    run_pandoc = FALSE
+    run_pandoc = FALSE # does not render the document in html
   )
   
   
   ## Station report ----
   
   # Produce individual reports for each station.
+
+  if (cnfg$do$verbose) {
+    writeLines("   Producing station reports")
+  }
 
   if (cnfg$do$indiv_reports) {
     
