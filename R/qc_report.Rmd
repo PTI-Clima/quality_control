@@ -1,0 +1,556 @@
+---
+title: 'Quality control report'
+subtitle: 'Filetype: `r cnfg$file$type`. Variable: `r cnfg$var$names[var]`.'
+author: LCSC
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document: 
+    theme: readable
+    highlight: tango
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    fig_caption: yes
+    toc_float: true
+    collapsed: false
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    toc: yes
+    toc_depth: 4
+abstract: ''
+---
+
+
+```{r preamble, echo=FALSE}
+# Preamble
+
+# knitr options
+knitr::opts_chunk$set(warning = FALSE,
+                      message = FALSE,
+                      echo = FALSE,
+                      eval = TRUE)
+
+# Dependencies (and install packages, if needed)
+if (!require('pacman')) install.packages('pacman')
+pacman::p_load(dplyr, tidyr, reshape, ggplot2, terra, sf, rnaturalearth)
+
+# Projections
+prj_geo <- '+proj=longlat +datum=WGS84 +no_defs'
+prj_utm30 <- '+proj=utm +zone=30 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs'
+prj_utm28 <- '+proj=utm +zone=28 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs'
+prj_lcc_pen <- '+proj=lcc +lat_1=40 +lat_0=40 +lon_0=-5 +k_0=1 +x_0=1424212.62930891 +y_0=1064393.31507647 +R=6367470 +units=m +no_defs +type=crs'
+prj_lcc_can <- '+proj=lcc +lat_1=29 +lat_0=29 +lon_0=-17.5 +k_0=1 +x_0=704589.9679218 +y_0=584696.130075825 +R=6367470 +units=m +no_defs +type=crs'
+prj_lambert <- prj_lcc_pen
+
+
+# # Polygons of Spain and world's coastline, used for mapping
+# coast <- ne_coastline(scale='medium', returnclass='sf')
+# spain <- ne_countries(country='spain', scale='medium', returnclass='sf')
+# 
+# # A basic map
+# g_all <- ggplot(spain) +
+#   geom_sf(color='grey90', fill='grey90') +
+#   geom_sf(data=coast, color='grey60') +
+#   xlim(c(-18, 4)) +
+#   ylim(c(27, 44)) +
+#   theme_classic() +
+#   theme(axis.title=element_blank(),
+#         plot.caption=element_text(hjust=0),
+#         strip.background=element_blank())
+# 
+# g_pen <- ggplot(spain) +
+#   geom_sf(color='grey90', fill='grey90') +
+#   geom_sf(data=coast, color='grey60') +
+#   xlim(c(-9.2, 4)) +
+#   ylim(c(35, 44)) +
+#   theme_classic() +
+#   theme(axis.title=element_blank(),
+#         plot.caption=element_text(hjust=0),
+#         strip.background=element_blank())
+# 
+# g_can <- ggplot(spain) +
+#   geom_sf(color='grey90', fill='grey90') +
+#   geom_sf(data=coast, color='grey60') +
+#   xlim(c(-18, -13.5)) +
+#   ylim(c(27.5, 29.4)) +
+#   theme_classic() +
+#   theme(axis.title=element_blank(),
+#         plot.caption=element_text(hjust=0),
+#         strip.background=element_blank())
+```
+
+
+
+
+
+# Global report
+
+A global summary of the quality control process over the whole dataset.
+
+## Station location
+
+```{r}
+g_pen +
+  geom_point(data=QC$stations, aes(LONGITUD, LATITUD), shape=21, size=0.5) +
+  scale_fill_distiller(palette='Spectral', direction=1) +
+  ggtitle('Station network')
+
+g_can +
+  geom_point(data=QC$stations, aes(LONGITUD, LATITUD), shape=21, size=0.5) +
+  scale_fill_distiller(palette='Spectral', direction=1) +
+  ggtitle('Station network')
+```
+
+
+## Station evolution
+
+```{r}
+kk <- table(QC$long$AÑO) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, n = 2) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                n = n / 12)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Average number of stations per year') +
+  theme_classic()
+```
+
+## Data resolution
+
+```{r}
+kk <- table(QC$long$resol) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(`Resolution (ºC)` = 1, `Num. months` = 2)
+kk$`Frequency (%)` <- round(kk$`Num. months` / sum(kk$`Num. months`) * 100, 1)
+knitr::kable(kk)
+```
+
+```{r}
+kk <- table(QC$long$AÑO, QC$long$resol) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, res = 2, n = 3) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                n = n / 12)
+
+ggplot(kk, aes(year, n, color = res)) +
+  geom_line() +
+  ggtitle('Number of stations per year, according to data resolution') +
+  theme_classic()
+```
+
+## Precipitation: non-measurable (-3)
+
+```{r}
+if (QC$var_name == "P") {
+  kk <- aggregate(QC$long$minus3, list(QC$long$AÑO), sum) %>% 
+    dplyr::rename(year = 1, n = 2)
+
+  ggplot(kk, aes(year, n)) +
+    geom_line() +
+    ggtitle('Number of non-measurable days ("-3") per year.') +
+    theme_classic()
+}
+```
+
+## Precipitation: aggregated days (-4)
+
+```{r}
+if (QC$var_name == "P") {
+  kk <- aggregate(QC$long$minus4, list(QC$long$AÑO), sum) %>% 
+    dplyr::rename(year = 1, n = 2)
+  
+  ggplot(kk, aes(year, n)) +
+    geom_line() +
+    ggtitle('Number of aggregated days ("-4") per year.') +
+    theme_classic()
+}
+```
+
+
+## Number or records per year, original and corrected
+
+```{r}
+# original data
+kk <- cbind(
+  aggregate(
+    x = rowSums(!is.na(QC$wide$data[[1]])),
+    by = list(QC$wide$id[[1]]$AÑO),
+    FUN = sum
+  ) %>% 
+    dplyr::rename(year = 1, original = 2),
+  aggregate(
+    x = rowSums(!is.na(QC$wide$data_qc_2[[1]])),
+    by = list(QC$wide$id[[1]]$AÑO),
+    FUN = sum
+  ) %>% 
+    dplyr::rename(year = 1, `quality-controlled` = 2) %>% 
+    dplyr::select(`quality-controlled`)
+) %>% 
+  reshape::melt(id.vars = 'year') %>% 
+  dplyr::rename(dataset = 2, n = 3)
+
+ggplot(kk, aes(year, n, color = dataset)) +
+  geom_line() +
+  ggtitle('Daily records per year') +
+  ylab('N') +
+  xlab('Year') +
+  theme_classic()
+```
+
+```{r}
+kk <- cbind(
+  aggregate(
+    x = rowSums(!is.na(QC$wide$data[[1]])),
+    by = list(QC$wide$id[[1]]$AÑO),
+    FUN = sum
+  ) %>% 
+    dplyr::rename(year = 1, original = 2),
+  aggregate(
+    x = rowSums(!is.na(QC$wide$data_qc_2[[1]])),
+    by = list(QC$wide$id[[1]]$AÑO),
+    FUN = sum
+  ) %>% 
+    dplyr::rename(year = 1, `quality-controlled` = 2) %>% 
+    dplyr::select(`quality-controlled`)
+) %>% 
+  dplyr::mutate(removed = original - `quality-controlled`) %>% 
+  dplyr::mutate(fraction = removed / original * 100)
+
+ggplot(kk, aes(year, removed)) +
+  geom_line() +
+  ggtitle('Daily records removed per year') +
+  ylab('N') +
+  xlab('Year') +
+  theme_classic()
+
+ggplot(kk, aes(year, fraction)) +
+  geom_line() +
+  ggtitle('Daily records removed per year') +
+  ylab('Fraction (%)') +
+  xlab('Year') +
+  theme_classic()
+```
+
+
+
+## Malformed months
+
+```{r}
+kk <- table(QC$long$AÑO, QC$long$malformed) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, type = 2, n = 3) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of malformed station / months per year') +
+  theme_classic()
+```
+
+## Empty months
+
+```{r}
+kk <- table(QC$long$AÑO, QC$long$empty) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, type = 2, n = 3) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of empty station / months per year') +
+  theme_classic()
+```
+
+```{r}
+kk <- table(QC$long$INDICATIVO, QC$long$empty) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(INDICATIVO = 1, type = 2, N = 3) %>% 
+  dplyr::mutate(class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE & N > 0) %>% 
+  merge(., QC$stations)
+
+g_pen +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction = 1) +
+  ggtitle('Number of empty months')
+
+g_can +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction=1) +
+  ggtitle('Number of empty months')
+```
+
+
+## Zero months
+
+```{r}
+kk <- table(QC$long$AÑO, QC$long$zero) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, type = 2, n = 3) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of zero station / months per year') +
+  theme_classic()
+```
+
+```{r}
+kk <- table(QC$long$INDICATIVO, QC$long$zero) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(INDICATIVO = 1, type = 2, N = 3) %>% 
+  dplyr::mutate(class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE & N > 0) %>% 
+  merge(., QC$stations)
+
+g_pen +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction = 1) +
+  ggtitle('Number of zero months')
+
+g_can +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction=1) +
+  ggtitle('Number of zero months')
+```
+
+## Misencoded months
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- table(QC$long$AÑO, QC$long$misencoded) %>% 
+    as.data.frame() %>% 
+    dplyr::rename(year = 1, type = 2, n = 3) %>% 
+    dplyr::mutate(year = as.numeric(as.character(year)),
+                  class = as.logical(as.character(type))) %>% 
+    dplyr::filter(class == TRUE)
+  
+  ggplot(kk, aes(year, n)) +
+    geom_line() +
+    ggtitle('Number of misencoded station / months per year') +
+    theme_classic()
+}
+```
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- table(QC$long$INDICATIVO, QC$long$misencoded) %>% 
+    as.data.frame() %>% 
+    dplyr::rename(INDICATIVO = 1, type = 2, N = 3) %>% 
+    dplyr::mutate(class = as.logical(as.character(type))) %>% 
+    dplyr::filter(class == TRUE & N > 0) %>% 
+    merge(., QC$stations)
+  
+  g_pen +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction = 1) +
+    ggtitle('Number of misencoded months')
+  
+  g_can +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction=1) +
+    ggtitle('Number of misencoded months')
+}
+```
+
+## Duplicated months
+
+```{r}
+kk <- table(QC$long$AÑO, QC$long$dupl) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(year = 1, type = 2, n = 3) %>% 
+  dplyr::mutate(year = as.numeric(as.character(year)),
+                class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of duplicated station / months per year') +
+  theme_classic()
+```
+
+```{r}
+kk <- table(QC$long$INDICATIVO, QC$long$dupl) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(INDICATIVO = 1, type = 2, N = 3) %>% 
+  dplyr::mutate(class = as.logical(as.character(type))) %>% 
+  dplyr::filter(class == TRUE & N > 0) %>% 
+  merge(., QC$stations)
+
+g_pen +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction = 1) +
+  ggtitle('Number of duplicated months')
+
+g_can +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction=1) +
+  ggtitle('Number of duplicated months')
+```
+
+
+```{r}
+kk <- table(QC$long$dupl_type %>% unlist()) %>% 
+  as.data.frame() %>% 
+  dplyr::rename(`Duplication type` = 1, `Num. months` = 2)
+kk$`Frequency (%)` <- round(kk$`Num. months` / sum(kk$`Num. months`) * 100, 1)
+
+knitr::kable(
+  x = kk,
+  caption = paste(c("Duplication type:",
+                    "1: same station, same year, different month (syM)",
+                    "2: same station, different year, same month (sYm)",
+                    "3: same station, different year, different month (sYM)",
+                    "4: different station, same year, same month (Sym)",
+                    "5: different station, different year and/or month (SYM)"
+                    ), collapse = "\n")
+             )
+```
+
+```{r}
+kk <- QC$long$dupl_dist %>%
+  unlist() %>% 
+  na.exclude() %>% 
+  as.data.frame() %>% 
+  dplyr::rename(Distance = 1)
+
+ggplot(kk, aes(Distance)) +
+  geom_histogram() +
+  ggtitle("Distance between duplicated months") +
+  xlab("Distance (km)") +
+  theme_classic()
+```
+
+```{r}
+kk <- QC$long$dupl_prob %>%
+  unlist() %>% 
+  na.exclude() %>% 
+  as.data.frame() %>% 
+  dplyr::rename(Probability = 1)
+
+ggplot(kk, aes(Probability)) +
+  geom_histogram() +
+  ggtitle("Probability of duplicated months") +
+  theme_classic()
+```
+
+## Stationary sequences
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- QC$wide$stationary[[1]] %>% 
+    rowSums() %>% 
+    aggregate(., list(QC$wide$id[[1]]$AÑO), sum) %>% 
+    dplyr::rename(Year = 1, N = 2)
+
+  ggplot(kk, aes(Year, N)) +
+    geom_line() +
+    ggtitle('Number of stationary days per year') +
+    theme_classic()
+}
+```
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- data.frame(
+    INDICATIVO = colnames(QC$wide$stationary[[1]]),
+    N = colSums(QC$wide$stationary[[1]])
+  ) %>% 
+    dplyr::filter(N > 0) %>% 
+    merge(., QC$stations)
+  
+  g_pen +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction = 1) +
+    ggtitle('Number of stationary days')
+  
+  g_can +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction=1) +
+    ggtitle('Number of stationary days')
+}
+```
+
+
+## False zeros
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- QC$wide$false_0[[1]] %>% 
+    rowSums() %>% 
+    aggregate(., list(QC$wide$id[[1]]$AÑO), sum) %>% 
+    dplyr::rename(Year = 1, N = 2)
+  
+  ggplot(kk, aes(Year, N)) +
+    geom_line() +
+    ggtitle('Number of false zero days per year') +
+    theme_classic()
+}
+```
+
+```{r}
+if (QC$var_name %in% c('TMIN', 'TMAX')) {
+  kk <- data.frame(
+    INDICATIVO = colnames(QC$wide$false_0[[1]]),
+    N = colSums(QC$wide$false_0[[1]])
+  ) %>% 
+    dplyr::filter(N > 0) %>% 
+    merge(., QC$stations)
+  
+  g_pen +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction = 1) +
+    ggtitle('Number of false zeros')
+  
+  g_can +
+    geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+    scale_fill_distiller(palette = 'Spectral', direction=1) +
+    ggtitle('Number of false zeros')
+}
+```
+
+## Outliers
+
+```{r}
+kk <- QC$wide$outliers[[1]] %>% 
+  rowSums() %>% 
+  aggregate(., list(QC$wide$id[[1]]$AÑO), sum) %>% 
+  dplyr::rename(Year = 1, N = 2)
+
+ggplot(kk, aes(Year, N)) +
+  geom_line() +
+  ggtitle('Number of outlier days per year') +
+  theme_classic()
+```
+
+```{r}
+kk <- data.frame(
+  INDICATIVO = colnames(QC$wide$outliers[[1]]),
+  N = colSums(QC$wide$outliers[[1]])
+) %>% 
+  dplyr::filter(N > 0) %>% 
+  merge(., QC$stations)
+
+g_pen +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction = 1) +
+  ggtitle('Number of outliers')
+
+g_can +
+  geom_point(data = kk, aes(LONGITUD, LATITUD, size = N), shape = 21) +
+  scale_fill_distiller(palette = 'Spectral', direction=1) +
+  ggtitle('Number of outliers')
+```
+
+
+
+

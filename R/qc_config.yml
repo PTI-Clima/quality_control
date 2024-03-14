@@ -1,0 +1,122 @@
+default:
+  version: 1
+  dir:
+    input: "./data_raw"
+    output: "./data/qc"
+  cores: 1 #!expr getOption("mc.cores"
+  do:
+    verbose: TRUE
+    trial: TRUE
+    export_csv: FALSE
+    indiv_reports: TRUE
+  file:
+    type: "Termo"
+    source: "AEMET"
+  var:
+    names: !expr c("TMIN", "TMAX")
+    longnames: !expr c("Minimum daily temperature", "Maximum daily temperature")
+    units: !expr c("1/10 ºC", "1/10 ºC")
+    limits:
+      lower: !expr c(-300, -300)
+      upper: !expr c(476, 476)
+
+termo:
+  do:
+    trial: FALSE
+
+pluvio:
+  file:
+    type: "Pluvio"
+  do:
+    trial: FALSE
+  var:
+    names: "P"
+    longnames: "Daily precipitation total"
+    units: "1/10 mm"
+    limits:
+      lower: !expr 0
+      upper: !expr 10000
+
+humedad:
+  file:
+    type: "Humedad"
+  do:
+    trial: FALSE
+  var:
+    names: c("HU00", "HU07", "HU13", "HU18", "HUMAX", "HUMIN")
+    units: c("%", "%", "%", "%", "%", "%")
+    limits:
+      lower: !expr 0
+      upper: !expr 100
+
+presion:
+  file:
+    type: "Presion"
+  do:
+    trial: FALSE
+  var:
+    names: c("PRES00", "PRES07", "PRES13", "PRES18", "PRESMAX", "PRESMIN")
+    units: c("1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_1:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+  var:
+    names: c("VEL_00", "VEL_07", "VEL_13", "VEL_18", "R_MAX_VEL")
+    units: c("Km h-1", "Km h-1", "Km h-1", "Km h-1", "Km h-1")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_2:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+  var:
+    names: c("REC24", "REC77")
+    units: c("Km", "Km")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_3:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+  var:
+    names: c("DIR_00", "DIR_07", "DIR_13", "DIR_18", "R_MAX_DIR", "R_MAX_HOR")
+    units: c("1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+insolacion:
+  file:
+    type: "Insolacion"
+  do:
+    trial: FALSE
+  var:
+    names: "TOTSOL"
+    units: "1/10 h"
+    limits:
+      lower: !expr 0
+      upper: !expr 240
+    
+radiacion:
+  file:
+    type: "Radiacion"
+  do:
+    trial: FALSE
+  var:
+    names: c("RDIRDIA", "RDIFDIA", "RGLODIA")
+    units: c("10 kJ m-2", "10 kJ m-2", "10 kJ m-2")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
