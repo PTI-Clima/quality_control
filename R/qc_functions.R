@@ -1337,7 +1337,7 @@ qc$methods(
         subtitle = paste0("Total daily records: ", n, ". Removed: ", m, " (", p, "%).")
       ) +
       xlab("Time") +
-      ylab(paste0(arg$var_names[i], " (", arg$var_units, ")")) +
+      ylab(paste0(cnfg$var$names[i], " (", cnfg$var$units, ")")) +
       theme(plot.title = element_text(hjust = 0.5),
             plot.subtitle = element_text(hjust = 0.5, size = 10))
     
