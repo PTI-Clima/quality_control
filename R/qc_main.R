@@ -291,7 +291,7 @@ for (var in 1:length(cnfg$var$names)) {
   # Export -----------------------------------------------------------------
 
   if (cnfg$do$verbose) {
-    writeLines("   Saving the results")
+    writeLines("   Saving results")
   }
   
   #   create output dir, if required
@@ -342,7 +342,8 @@ for (var in 1:length(cnfg$var$names)) {
     input = "./R/qc_report.Rmd",
     output_dir = cnfg$dir$output,
     output_file = paste0(cnfg$var$names[var], ".html"),
-    envir = parent.frame()
+    envir = parent.frame(),
+    run_pandoc = FALSE
   )
   
   
@@ -352,7 +353,7 @@ for (var in 1:length(cnfg$var$names)) {
 
   if (cnfg$do$indiv_reports) {
     
-    report_dir <- paste0(arg$dir_output, "/", arg$var_names[var], "_reports")
+    report_dir <- paste0(cnfg$dir$output, "/", cnfg$var$names[var], "_reports")
     if (!dir.exists(report_dir)) {
       dir.create(report_dir)
     }
