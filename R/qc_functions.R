@@ -9,11 +9,14 @@
 #' the two codes.
 #' ---
 
-require(tidyverse)
-require(Hmisc)
-require(ggpmisc)
-require(patchwork)
-
+suppressPackageStartupMessages(
+  suppressWarnings( p_load(
+    tidyverse,
+    Hmisc,
+    ggpmisc,
+    patchwork
+  ) )
+)
 
 # Read and format raw data ------------------------------------------------
 
@@ -244,10 +247,10 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
   }
   
   # Check the variable type
-  valid_types <- c("Termo", "Pluvio", "Humedad", "Viento", "Insolacion",
-                   "Radiacion", "Presion")
+  valid_types <- c("Termo", "Pluvio", "Humedad", "Viento",
+                   "Insolacion", "Radiacion", "Presion", "CanMaxPCP")
   if (!(type %in% valid_types)) {
-    paste("Type must be one of:", paste(valid_types, collapse = ', '))
+    error("Type must be one of:", paste(valid_types, collapse = ', '))
   }
   
   # Get the list of text files for the variable of interest
@@ -282,9 +285,9 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
   }
   
   # Arrange data into long-month format (only for file types in long-day format)
-  if (type %in% c("Humedad", "Viento", "Radiacion", "Presion")) {
+  if (type %in% c("Humedad", "Viento", "Radiacion", "Presion", "CanMaxPCP")) {
     
-    vals <- "00|07|13|18|MAX|MIN|REC24|REC77|RDIRDIA|RDIFDIA|RGLODIA"
+    vals <- "00|07|13|18|MAX|MIN|REC24|REC77|RDIRDIA|RDIFDIA|RGLODIA|PMAX"
     DF <- tidyr::pivot_wider(
       data = DF %>% dplyr::arrange(DIA),
       id_cols = INDICATIVO:LATITUD,
@@ -313,6 +316,22 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
   
 }
 
+qc_read_sts_data <- function(path, type, source = "AEMET") {
+  
+  file <- list.files(
+    path = path,
+    pattern = paste0("(Maestro_estaciones_)\\w+(.csv)"),
+    full.names = TRUE
+  )
+  
+  sts <- read.table(file = file,
+                    sep = ";",
+                    header = TRUE) %>% 
+    dplyr::select(INDICATIVO:TIPOS)
+
+  return(sts)
+  
+}
 
 
 
@@ -326,8 +345,8 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
 #   `stations`: station metadata (a DF)
 #   `long`: contains the raw data and metadata, in long format (a DF)
 #   `wide`: contains the raw data and metadata, in wide format (a DF)
-# `qc()` is a generator function that instantiates a new `qc` objects, that is
-# it behaves like `matrix()`, `data.frame()`, etc.
+# `qc()` is a generator function that instantiates a new `qc` objects; that is,
+# it behaves in a similar way than `matrix()`, `data.frame()`, etc.
 #
 # Note for developers: during development, if we modify an already existing
 # method (while debugging, for instance), any RC object already created will
@@ -358,7 +377,7 @@ qc$methods(
   
   # Populate the 'stations', 'long' and 'wide' items of the qc object from
   # raw data read from file.
-  qc_add_data = function(data) {
+  qc_add_data = function(data, stas) {
 
     id_cols <- grep(
       "INDICATIVO|NOMBRE|ALTITUD|C_X|C_Y|NOM_PROV|LONGITUD|LATITUD",
@@ -366,19 +385,27 @@ qc$methods(
     )
     data_cols <- grep(paste0(var_name, "\\d+"), colnames(data))
 
-    # add stations data
+    #   add stations' data
     stations <<- data[id_cols] %>%
       unique() %>%
       dplyr::arrange(INDICATIVO) %>%
+      as_tibble() %>% 
+      merge(., stas, all.x = TRUE) %>% 
+      dplyr::mutate(FUNCIONA = ifelse(FUNCIONA == 0, TRUE, FALSE)) %>%
       as_tibble()
-    
+
     # add data in long format
     long <<- dplyr::select(dat, INDICATIVO:MES, all_of(data_cols)) %>%
       as_tibble()
-    
+
     # correct negative values in precipitation
-    if (var_name == "P") {
+    if (var_type %in% c("Pluvio", "CanMaxPCP")) {
       long <<- qc_negative_precip(long)
+    }
+    
+    # remove variable and missing values in wind direction
+    if (var_type == "Viento" & var_unit == "1/10 º") {
+      long <<- qc_missing_wdir(long)
     }
     
     # add data in wide format
@@ -427,13 +454,14 @@ qc_meta_cols <- function(data) {
 qc_long_to_wide <- function(data) {
   
   idc <- qc_id_cols(data)
-  rc <- which(colnames(data) == 'resol')
+#  rc <- which(colnames(data) == 'resol')
   dc <- qc_data_cols(data)
-  prefix <- gsub('1', '', colnames(data)[dc][1])
+  prefix <- gsub('1$', '', colnames(data)[dc][1])
   
   # transpose the data: first to long...
   data_long <- tidyr::pivot_longer(
-    data = data[, c(idc,dc,rc)],
+#    data = data[, c(idc,dc,rc)],
+    data = data[, c(idc,dc)],
     cols = all_of(dc),
     names_to = "DIA",
     names_prefix = prefix
@@ -482,6 +510,23 @@ qc_negative_precip <- function(data) {
   
 }
 
+# For wind direction only: remove 88 and 99 values (missing observations
+# and variable direction).
+qc_missing_wdir <- function(data) {
+  
+  dc <- qc_data_cols(data)
+  corr <- data[,dc] %>% as.matrix()
+  
+  # set 88 and 99 values to NA (max. value is 36)
+  w <- which(corr > 36)
+  corr[w] <- 0
+  
+  return(
+    cbind(data[,-dc], corr) %>%
+      as_tibble()
+  )
+  
+}
 
 ## General metods ----
 
@@ -517,8 +562,10 @@ qc$methods(
       if (sum(x %% 5, na.rm = TRUE) == 0) {
         return(0.5)
       }
-      if (var_name == "P" & sum(x %% 2, na.rm = TRUE) == 0) {
-        return(0.2)
+      if (var_type %in% c("Pluvio", "CanMaxPCP")) {
+        if (sum(x %% 2, na.rm = TRUE) == 0) {
+          return(0.2)
+        }
       }
       if (sum(x %% 1, na.rm = TRUE) == 0) {
         return(0.1)
@@ -661,11 +708,14 @@ qc$methods(
   # Find duplicated months.
   # Returns a logical vector indicating whether a given record (month) is
   # duplicated or not. Months with less data than thres will not be considered,
-  # as well as months that consist only on zeros.
+  # as well as months that consist only on zeros. If thres is NULL, then only
+  # complete months will be considered.
   qc_dupl_months_find = function(start = 1, end = 31, thres = NULL) {
-    
+
     if (is.null(thres)) {
-      thres <- long$ndays
+      # we set thres to -1 to allow months with 30 and 31, 28 and 29 days to
+      # be matched if repeated
+      thres <- long$ndays - 1
     }
     
     data_cols <- qc_data_cols(long)[start:end]
@@ -673,9 +723,10 @@ qc$methods(
     is_complete <- rowSums(!is.na(long[, data_cols])) >= thres
     is_duplicate <- duplicated(long[, data_cols]) |
       duplicated(long[, data_cols], fromLast = TRUE)
+    kk <- anyDuplicated(long[, data_cols])
     
     # extra requirements for pcp: consider the monthly total and the number of wet days
-    if (var_name == "P") {
+    if (var_type %in% c("Pluvio", "CanMaxPCP")) {
       cum <- rowSums(long[, data_cols], na.rm = TRUE)
       wet <- rowSums(long[, data_cols] > 0, na.rm = TRUE)
       long$dupl <<- !long$zero & cum > 100 & wet > 3 & is_complete & is_duplicate
@@ -701,24 +752,35 @@ qc$methods(
     long$id <<- 1:nrow(long)
 
     match <- as.list(rep(NA, nrow(long)))
-    for (i in which(long$dupl)) {
+    dupl_rows <- which(long$dupl)
+#which(long$INDICATIVO[dupl_rows] == '1738O')
+#i <- dupl_rows[1672]
+#i <- dupl_rows[1673]
+
+    for (i in dupl_rows) {
+      # don't do it if already matched
       if (!is.na(match[[i]])) next()
       kk <- dplyr::inner_join(
-        x = long[-i,],
+        x = long[dupl_rows,],
         y = long[i,],
         by = colnames(long[, data_cols]),
         suffix = c("", ".y")
       )
-      if (nrow(kk) > 0) {
-        # assign the match
-        match[[i]] <- kk$id
-        # the following doubles the process speed
-        for (j in 1:length(kk$id)) {
-          if (is.na(match[[kk$id[j]]])) {
-            match[[kk$id[j]]] <- i
-          } else {
-            match[[kk$id[j]]] <- c(match[[kk$id[j]]], i)
-          }
+      # exclude self
+      kk <- kk[kk$id != i,]
+      # in a few cases, it results in no match...
+      if (nrow(kk) == 0) {
+        long$dupl[i] <<- FALSE
+        next()
+      }
+      # assign the match
+      match[[i]] <- kk$id
+      # if A == B, then B == A...
+      for (j in 1:length(kk$id)) {
+        if (is.na(match[[kk$id[j]]])) {
+          match[[kk$id[j]]] <- i
+        } else {
+          match[[kk$id[j]]] <- c(match[[kk$id[j]]], i)
         }
       }
     }
@@ -807,6 +869,7 @@ qc$methods(
       
       # compute empirical probability for target month (min, mean, max)
       if (length(wm) == 0) next()
+      if (sum(!is.na(long[wm, data_cols])) == 0) next()
       f <- ecdf(long[wm, data_cols] %>% unlist())
       p <- f(long[i, data_cols] %>% unlist()) %>% na.exclude()
       prob[[i]] <- c(min(p), mean(p), max(p)) %>%
@@ -831,17 +894,16 @@ qc$methods(
     
     malf <- long$malformed
     empty <- long$empty
-    if (var_name == "P") {
+    if (var_type %in% c("Pluvio", "CanMaxPCP")) {
       zero <- rep(FALSE, nrow(long))
     } else {
       zero <- long$zero
     }
     dupl <- long$dupl
-    match <- long$dupl_match
     dist <- long$dupl_dist
     type <- long$dupl_type
     
-    rem <- rep(NA, length(long$dupl))
+    rem <- rep(NA, length(dupl))
     for (i in which(malf | empty | zero | dupl)) {
       if (malf[i] | empty[i] | zero[i]) {
         rem[i] <- TRUE
@@ -897,11 +959,10 @@ qc$methods(
   # Move one data column from long to wide data formats.
   qc_add_var_to_long = function(col_name) {
     
-#    data <- long
     idc <- qc_id_cols(long)
     wc <- which(colnames(long) == col_name)
     dc <- qc_data_cols(long)
-    prefix <- gsub('1', '', colnames(long)[dc][1])
+    prefix <- gsub('1$', '', colnames(long)[dc][1])
     
     # transpose the data: first to long...
     data_long <- tidyr::pivot_longer(
@@ -938,7 +999,7 @@ qc$methods(
   # `n` = 7 (15) consecutive days with identical values, for data resolutions of
   # 0.5 / '0.1 (1) °C.
   qc_stationary_sequence = function() {
-    
+
     resol <- wide$resolution[[1]]
     data <- wide$data_qc_1[[1]]
     thres <- ifelse(resol == 1, 15, 7) %>% 
@@ -949,18 +1010,31 @@ qc$methods(
       dplyr::mutate_all(function(x) x <- 0)
     
     # Now go station by station
-    # TO DO: parallelize, or at least lapply()
+    # TO DO: re-write using lapply()
     for (i in 1:ncol(data)) {
+      # determine long repeated sequences
       seq <- rle(data[[i]])
       long_seq <- which(seq$lengths >= 7)
-      if (length(long_seq) > 0) {
-        for (j in 1:length(long_seq)) {
-          nseq <- seq$lengths[long_seq[j]]
-          nstart <- sum(seq$lengths[1:(long_seq[j]-1)]) + 1
-          th <- max(thres[[i]][nstart:(nstart+nseq-1)])
-          if (nseq >= th) {
-            static[[i]][nstart:(nstart+nseq-1)] <- 1
-          }
+      # if there are long repeated sequences...
+      if (length(long_seq) == 0) next()
+      for (j in 1:length(long_seq)) {
+        # sequence starting and ending positions
+        if (j == 1) {
+          st <- 1
+        } else {
+          st <- cumsum(seq$lengths)[long_seq[j]-1] + 1
+        }
+        end <- cumsum(seq$lengths)[long_seq[j]]
+        #data[[i]][st:end]
+        #thres[[i]][st:end]
+        # sequence length
+        nseq <- seq$lengths[long_seq[j]]
+        # length threshold to flag stationary
+        th <- max(thres[[1]][st:end])
+        if (is.na(th)) th <- 15
+        # flag only if length higher than threshold
+        if (nseq >= th) {
+          static[[i]][st:end] <- 1
         }
       }
     }
@@ -1246,53 +1320,15 @@ qc$methods(
 
 # Reporting ----
 
-# Polygons of Spain and world's coastline, used for mapping
-require(rnaturalearth)
-coast <- rnaturalearth::ne_coastline(scale='medium', returnclass='sf')
-spain <- rnaturalearth::ne_countries(country='spain', scale='medium', returnclass='sf')
-
-# Basic maps
-g_all <- ggplot(spain) +
-  geom_sf(color='grey90', fill='grey90') +
-  geom_sf(data=coast, color='grey60') +
-  xlim(c(-18, 4)) +
-  ylim(c(27, 44)) +
-  theme_classic() +
-  theme(axis.title=element_blank(),
-        plot.caption=element_text(hjust=0),
-        strip.background=element_blank())
-
-g_pen <- ggplot(spain) +
-  geom_sf(color='grey90', fill='grey90') +
-  geom_sf(data=coast, color='grey60') +
-  xlim(c(-9.2, 4)) +
-  ylim(c(35, 44)) +
-  theme_classic() +
-  theme(axis.title=element_blank(),
-        plot.caption=element_text(hjust=0),
-        strip.background=element_blank())
-
-g_can <- ggplot(spain) +
-  geom_sf(color='grey90', fill='grey90') +
-  geom_sf(data=coast, color='grey60') +
-  xlim(c(-18, -13.5)) +
-  ylim(c(27.5, 29.4)) +
-  theme_classic() +
-  theme(axis.title=element_blank(),
-        plot.caption=element_text(hjust=0),
-        strip.background=element_blank())
-
 qc$methods(
   
   ## General methods ---
   
   # Produce a report of the quality control process for one given station.
-  qc_report_station = function(s, report_dir) {
+  # Format can be 'pdf' or 'png'.
+  qc_report_station = function(s, report_dir, format = 'pdf') {
   
-#    stations <- var$stations
-#    long <- var$long
-#    wide <- var$wide
-    
+    #stations <- QC$stations; wide <- QC$wide; long <- QC$long
     station <- stations[s,]
     
     # determine if that station exists in wide
@@ -1300,10 +1336,32 @@ qc$methods(
     
     is_Canary <- ifelse(station$LATITUD < 32, TRUE, FALSE)
     
-    pdf(
-      file = paste0(report_dir, "/", station$INDICATIVO, ".pdf"),
-      width = 10
-    )
+    # determine if the series has months or days removed, as this affects
+    # the file name
+    rem <- ""
+    w <- which(long$INDICATIVO == station$INDICATIVO)
+    if (sum(long$remove[w], na.rm = TRUE) > 0) {
+      rem <- "_qc"
+    }
+    w <- which(colnames(wide$outliers[[1]]) == station$INDICATIVO)
+    if (length(w) == 0) return(NULL)
+    if (sum(wide$remove[[1]][[w]]) > 0) {
+      rem <- "_qc"
+    }
+    
+    if (format == 'pdf') {
+      pdf(
+        file = paste0(report_dir, "/", station$INDICATIVO, rem, ".pdf"),
+        width = 10
+      )
+    } else {
+      png(
+        filename = paste0(report_dir, "/", station$INDICATIVO, rem, ".png"),
+        width = 10,
+        units = "in",
+        res = 150
+      )
+    }
     
     # Time series
     kk <- data.frame(
@@ -1317,18 +1375,20 @@ qc$methods(
         dplyr::select(which(colnames(wide$data_qc_2[[1]]) == station$INDICATIVO))
     ) %>% 
       dplyr::rename(ori = 2, qcc = 3)
-    #   determine data removed  
+    #   determine data removed (m), total data (n) and percent (p)
     kk$rem <- ifelse(is.na(kk$qcc) & !is.na(kk$ori), kk$ori, NA)
-    
     n <- sum(!is.na(kk$ori))
     m <- sum(!is.na(kk$rem))
     p <- signif(m / n * 100, 2)
-    
+
+    #   time series plot
     g1 <- ggplot(kk) +
-      geom_point(aes(dates, ori), color = 'black', size = 0.5)
+      geom_point(aes(dates, ori), color = 'black', size = 0.5,
+                 na.rm = TRUE)
     if (m > 0) {
       g1 <- g1 +
-        geom_point(aes(dates, rem), color = 'red', size = 0.5)
+        geom_point(aes(dates, rem), color = 'red', size = 0.5,
+                   na.rm = TRUE)
     }
     g1 <- g1 +
       theme_classic() +
@@ -1342,7 +1402,21 @@ qc$methods(
             plot.subtitle = element_text(hjust = 0.5, size = 10))
     
     # Location
+    
+    coast <- rnaturalearth::ne_coastline(scale='medium', returnclass='sf')
+    spain <- rnaturalearth::ne_countries(country='spain', scale='medium', returnclass='sf')
+    
     if (is_Canary) {
+      
+      g_can <- ggplot(spain) +
+        geom_sf(color='grey90', fill='grey90') +
+        geom_sf(data=coast, color='grey60') +
+        xlim(c(-18, -13.5)) +
+        ylim(c(27.5, 29.4)) +
+        theme_classic() +
+        theme(axis.title=element_blank(),
+              plot.caption=element_text(hjust=0),
+              strip.background=element_blank())
       
       g2 <- g_can +
         geom_point(data = station, aes(LONGITUD, LATITUD),
@@ -1351,6 +1425,16 @@ qc$methods(
         theme(plot.title = element_text(hjust = 0.5, size = 12))
       
     } else {
+      
+      g_pen <- ggplot(spain) +
+        geom_sf(color='grey90', fill='grey90') +
+        geom_sf(data=coast, color='grey60') +
+        xlim(c(-9.2, 4)) +
+        ylim(c(35, 44)) +
+        theme_classic() +
+        theme(axis.title=element_blank(),
+              plot.caption=element_text(hjust=0),
+              strip.background=element_blank())
       
       g2 <- g_pen +
         geom_point(data = station, aes(LONGITUD, LATITUD),
@@ -1363,7 +1447,8 @@ qc$methods(
     }
     
     # Tables
-    # Removed months
+    
+    #   Removed months
     w <- which(long$INDICATIVO == station$INDICATIVO)
     kk <- data.frame(
       Malformed = sum(long$malformed[w]),
@@ -1382,7 +1467,7 @@ qc$methods(
       theme_void() +
       theme(plot.title = element_text(hjust = 0.5, size = 12))
     
-    # Removed days
+    #   Removed days
     w <- which(colnames(wide$outliers[[1]]) == station$INDICATIVO)
     kk <- data.frame(
       Stationary = sum(wide$stationary[[1]][[w]]),
@@ -1528,29 +1613,72 @@ qc$methods(
     }
     
     # List of duplicated months
-    w <- which(long$INDICATIVO == station$INDICATIVO)
-    nr <- sum(long$dupl[w])
+    w <- which(long$INDICATIVO == station$INDICATIVO & long$dupl)
+    nr <- length(w)
     if (nr > 0) {
-      dc <- qc_data_cols(long)
-      # ww <- apply(long[w,][long$dupl[w],'dupl_match'], 1,
-      #             function(x) x[[1]])
-      ww <- lapply(long[w,][long$dupl[w],'dupl_match'], 
-                  function(x) x[[1]]) %>%
-        unlist()
-      kk <- cbind(
-        long[w,][long$dupl[w],] %>% 
-          dplyr::select(INDICATIVO:MES),
-        long[ww,] %>% 
-          dplyr::select(INDICATIVO:MES) %>% 
-          dplyr::rename(IND.2 = INDICATIVO, AÑO.2 = AÑO, MES.2 = MES)
-      ) %>% 
-        dplyr::mutate(data = long[w,][long$dupl[w],] %>% 
-                        dplyr::select(all_of(dc)) %>% 
-                        t() %>% 
-                        as.data.frame() %>% 
-                        paste()
-        )
       
+      dc <- qc_data_cols(long)
+      # ww <- long$'dupl_match'[w] %>%
+      #   unlist()
+      # 
+      # # forma 1 - cuando no coincide año / mes
+      # kk <- cbind(
+      #   long[w,] %>% 
+      #     dplyr::select(INDICATIVO:MES),
+      #   long[ww,] %>% 
+      #     dplyr::select(INDICATIVO:MES) %>% 
+      #     dplyr::rename(IND.2 = INDICATIVO, AÑO.2 = AÑO, MES.2 = MES)
+      # ) %>% 
+      #   dplyr::mutate(data = long[w,][long$dupl[w],] %>% 
+      #                   dplyr::select(all_of(dc)) %>% 
+      #                   t() %>% 
+      #                   as.data.frame() %>% 
+      #                   paste()
+      #   )
+      # 
+      # # forma 2 - cuando relación de uno a dos
+      # kk <- merge(
+      #   long[w,] %>% 
+      #     dplyr::select(INDICATIVO:MES),
+      #   long[ww,] %>% 
+      #     dplyr::select(INDICATIVO:MES) %>% 
+      #     dplyr::rename(IND.2 = INDICATIVO)
+      # ) %>% 
+      #   dplyr::arrange(AÑO, MES)
+      # kkk <- merge(kk[, c("AÑO", "MES", "INDICATIVO")], long[w,]) %>% 
+      #   dplyr::arrange(AÑO, MES) %>% 
+      #   dplyr::select(all_of(dc)) %>% 
+      #   t() %>% 
+      #   as.data.frame() %>% 
+      #   paste()
+      # kk <- cbind(kk, data = kkk)
+
+      # forma 3
+      kk <- NULL
+      ww <- long$'dupl_match'[w]
+      for (r in 1:nr) {
+        np <- length(ww[r][[1]])
+        for (p in 1:np) {
+          kk[[r + p - 1]] <- cbind(
+            long[w[r],] %>% 
+              dplyr::select(INDICATIVO:MES),
+            long[ww[[r]][p],] %>% 
+              dplyr::select(INDICATIVO:MES) %>% 
+              dplyr::rename(IND.2 = INDICATIVO, AÑO.2 = AÑO, MES.2 = MES)
+          ) %>% 
+            dplyr::mutate(data = long[w[r],][long$dupl[w[r]],] %>% 
+                            dplyr::select(all_of(dc)) %>% 
+                            t() %>% 
+                            as.data.frame() %>% 
+                            paste()
+            )
+        }
+      }
+      kk <- do.call(rbind.data.frame, kk)
+
+      # split into as many pages as required (each page contains 30 rows)
+      nr <- 19
+      nr <- nrow(kk)
       for (r in 1:ceiling(nr/30)) {
         wr_start <- (1 * (r-1) * 30) + 1
         wr_end <- min(wr_start + 29, nr)
@@ -1605,3 +1733,4 @@ qc$methods(
     
   }
 )
+      

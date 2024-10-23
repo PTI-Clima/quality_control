@@ -1,6 +1,6 @@
 ---
 title: 'Quality control report'
-subtitle: 'Filetype: `r cnfg$file$type`. Variable: `r cnfg$var$names[var]`.'
+subtitle: 'Filetype: `r cnfg$file$type`. Variable: `r cnfg$var$names[var]` (`r cnfg$var$longnames[var]`).'
 author: LCSC
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -21,7 +21,6 @@ output:
 abstract: ''
 ---
 
-
 ```{r preamble, echo=FALSE}
 # Preamble
 
@@ -34,6 +33,10 @@ knitr::opts_chunk$set(warning = FALSE,
 # Dependencies (and install packages, if needed)
 if (!require('pacman')) install.packages('pacman')
 pacman::p_load(dplyr, tidyr, reshape, ggplot2, terra, sf, rnaturalearth)
+```
+
+```{r preamble2, echo=FALSE}
+# TO DO: Move all the following to an .R file, or similar, to be used by all .Rmd files.
 
 # Projections
 prj_geo <- '+proj=longlat +datum=WGS84 +no_defs'
@@ -43,41 +46,45 @@ prj_lcc_pen <- '+proj=lcc +lat_1=40 +lat_0=40 +lon_0=-5 +k_0=1 +x_0=1424212.6293
 prj_lcc_can <- '+proj=lcc +lat_1=29 +lat_0=29 +lon_0=-17.5 +k_0=1 +x_0=704589.9679218 +y_0=584696.130075825 +R=6367470 +units=m +no_defs +type=crs'
 prj_lambert <- prj_lcc_pen
 
+# Polygons of Spain and World's coastline, used for mapping
+suppressPackageStartupMessages(
+  suppressWarnings(
+    require(rnaturalearth)
+  )
+)
+coast <- rnaturalearth::ne_coastline(scale='medium', returnclass='sf')
+spain <- rnaturalearth::ne_countries(country='spain', scale='medium', returnclass='sf')
 
-# # Polygons of Spain and world's coastline, used for mapping
-# coast <- ne_coastline(scale='medium', returnclass='sf')
-# spain <- ne_countries(country='spain', scale='medium', returnclass='sf')
-# 
-# # A basic map
-# g_all <- ggplot(spain) +
-#   geom_sf(color='grey90', fill='grey90') +
-#   geom_sf(data=coast, color='grey60') +
-#   xlim(c(-18, 4)) +
-#   ylim(c(27, 44)) +
-#   theme_classic() +
-#   theme(axis.title=element_blank(),
-#         plot.caption=element_text(hjust=0),
-#         strip.background=element_blank())
-# 
-# g_pen <- ggplot(spain) +
-#   geom_sf(color='grey90', fill='grey90') +
-#   geom_sf(data=coast, color='grey60') +
-#   xlim(c(-9.2, 4)) +
-#   ylim(c(35, 44)) +
-#   theme_classic() +
-#   theme(axis.title=element_blank(),
-#         plot.caption=element_text(hjust=0),
-#         strip.background=element_blank())
-# 
-# g_can <- ggplot(spain) +
-#   geom_sf(color='grey90', fill='grey90') +
-#   geom_sf(data=coast, color='grey60') +
-#   xlim(c(-18, -13.5)) +
-#   ylim(c(27.5, 29.4)) +
-#   theme_classic() +
-#   theme(axis.title=element_blank(),
-#         plot.caption=element_text(hjust=0),
-#         strip.background=element_blank())
+# Basic maps
+g_all <- ggplot(spain) +
+  geom_sf(color='grey90', fill='grey90') +
+  geom_sf(data=coast, color='grey60') +
+  xlim(c(-18, 4)) +
+  ylim(c(27, 44)) +
+  theme_classic() +
+  theme(axis.title=element_blank(),
+        plot.caption=element_text(hjust=0),
+        strip.background=element_blank())
+
+g_pen <- ggplot(spain) +
+  geom_sf(color='grey90', fill='grey90') +
+  geom_sf(data=coast, color='grey60') +
+  xlim(c(-9.2, 4)) +
+  ylim(c(35, 44)) +
+  theme_classic() +
+  theme(axis.title=element_blank(),
+        plot.caption=element_text(hjust=0),
+        strip.background=element_blank())
+
+g_can <- ggplot(spain) +
+  geom_sf(color='grey90', fill='grey90') +
+  geom_sf(data=coast, color='grey60') +
+  xlim(c(-18, -13.5)) +
+  ylim(c(27.5, 29.4)) +
+  theme_classic() +
+  theme(axis.title=element_blank(),
+        plot.caption=element_text(hjust=0),
+        strip.background=element_blank())
 ```
 
 
@@ -141,32 +148,33 @@ ggplot(kk, aes(year, n, color = res)) +
   theme_classic()
 ```
 
-## Precipitation: non-measurable (-3)
-
-```{r}
-if (QC$var_name == "P") {
-  kk <- aggregate(QC$long$minus3, list(QC$long$AÑO), sum) %>% 
-    dplyr::rename(year = 1, n = 2)
-
-  ggplot(kk, aes(year, n)) +
-    geom_line() +
-    ggtitle('Number of non-measurable days ("-3") per year.') +
-    theme_classic()
-}
+```{asis, echo = QC$var_name == "P"}
+## Below detection limit precipitation (-3)
 ```
 
-## Precipitation: aggregated days (-4)
 
-```{r}
-if (QC$var_name == "P") {
-  kk <- aggregate(QC$long$minus4, list(QC$long$AÑO), sum) %>% 
-    dplyr::rename(year = 1, n = 2)
-  
-  ggplot(kk, aes(year, n)) +
-    geom_line() +
-    ggtitle('Number of aggregated days ("-4") per year.') +
-    theme_classic()
-}
+```{r, eval = QC$var_name == "P"}
+kk <- aggregate(QC$long$minus3, list(QC$long$AÑO), sum) %>% 
+  dplyr::rename(year = 1, n = 2)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of non-measurable days ("-3") per year.') +
+  theme_classic()
+```
+
+```{asis, echo = QC$var_name == "P"}
+## Aggregated days (-4)
+```
+
+```{r, eval = QC$var_name == "P"}
+kk <- aggregate(QC$long$minus4, list(QC$long$AÑO), sum) %>% 
+  dplyr::rename(year = 1, n = 2)
+
+ggplot(kk, aes(year, n)) +
+  geom_line() +
+  ggtitle('Number of aggregated days ("-4") per year.') +
+  theme_classic()
 ```
 
 

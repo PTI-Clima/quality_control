@@ -1,13 +1,13 @@
 #' ---
 #' title: Quality control process for raw AEMET data files.
 #' 
-#' author: Santiago Beguería
+#' author: Santiago Beguería, LCSC-CSIC (https://lcsc.csic.es).
 #' 
-#' date: 2024-26-02, 2024-04-03
+#' date: 2024-26-02, 2024-04-03.
 #' 
-#' version: 0.1 (pre-production)
+#' version: 0.1 (pre-production).
 #' 
-#' abstract: This is the main file that performs the quality-control process.
+#' summary: This is the main file that performs the quality-control process.
 #'  It reads or sources all other files (qc_config, qc_functions, qc_report).
 #'  From the console, run: run e.g. `Rscript R/qc_main.R termo`, where 'termo'
 #'  is a named configuration read from the configuration file `qc_config.yml`.
@@ -15,36 +15,73 @@
 #'  arguments are processed, and a number of output files are stored in the
 #'  output directory (also determined in the configuration file). Output files
 #'  include the complete `qc` object in an .RData file, (optional) the final
-#'  data matrix in a .csv file, a gobal report in a .pdf file, and (optional)
-#'  individual reports for each data series as .pdf files inside a
+#'  data matrix in a .csv file, a global report in a .pdf file, and (optional)
+#'  individual reports for each data series as .pdf files inside the
 #'  corresponding directory.
+#'  
+#' license: This program is free software: you can redistribute it and/or
+#'  modify it under the terms of the GNU General Public License as published
+#'  by the Free Software Foundation, either version 3 of the License, or any
+#'  later version. For more info, see <http://www.gnu.org/licenses/>,
+#'  <http://www.gnu.org/licenses/gpl.txt/>.
+#'  
+#' disclaimer: This program is distributed in the hope that it will be useful,
+#'  but WITHOUT ANY WARRANTY, without even the implied warranty of
+#'  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+#'  Public License for more details.
 #' ---
 
 
 # Preamble ----------------------------------------------------------------
 
 # Dependencies
-library(tidyverse)
+if (!require('pacman')) install.packages('pacman')
+suppressPackageStartupMessages(
+  suppressWarnings( pacman::p_load(
+    tidyverse,
+    argparser
+  ) )
+)
+
 source("./R/qc_functions.R")
 
 # Configuration arguments
 
-# These are defined in `qc_config.yml`. The name of the configuration to use
-# should be passed as inline argument when the script is called.
+# Configuration arguments are defined in file `qc_config.yml`. There are
+# different configuration sets, aimed at different variables in the raw
+# files supplied by AEMET. These configuration sets are named, and the
+# name of the specific configuration set to use needs to be passed as an
+# inline argument when the script is called.
 
 #   determine which configuration to use
-configuration <- commandArgs(trailingOnly = TRUE)
-if (length(configuration) == 0) {
-  writeLines("No configuration name has been supplied. Using the default configuration.")
-} else {
+
+cmdline_parser<- arg_parser("Quality Control")
+cmdline_parser<- add_argument(cmdline_parser, "configuration", help="Confituration to use", type="character")
+cmdline_parser <- add_argument(cmdline_parser, "--trial", flag=TRUE, help="Enable Trial Mode")
+
+cmdline <-parse_args(cmdline_parser);
+
+configuration <- cmdline$configuration
+
+#configuration <- commandArgs(trailingOnly = TRUE) # configuration <- 
+#if (length(configuration) == 0) {
+#  writeLines("No configuration name has been supplied. Using the default configuration.")
+#} else {
   writeLines(paste0("Using '", configuration, "' configuration."))
-}
+#}
+
+
 
 #   read arguments from config file
-#cnfg <- config::get(file = "./R/qc_config.yml", config = 'presion')
 cnfg <- config::get(file = "./R/qc_config.yml", config = configuration[1])
 
+if(cmdline$trial){
+  # override trial cfg of yaml
+  cnfg$do$trial=TRUE
+}
 
+# To do it manually:
+# cnfg <- config::get(file = "./R/qc_config.yml", config = 'viento_3')
 
 # Read data -----------------------------------------------------------------
 
@@ -92,7 +129,7 @@ cnfg <- config::get(file = "./R/qc_config.yml", config = configuration[1])
 # `wide` slots.
 
 if (cnfg$do$verbose) {
-  writeLines("Reading data files")
+  writeLines(paste0("Reading data files (", Sys.time(), ")"))
 }
 
 dat <- qc_read_raw_data(
@@ -102,17 +139,19 @@ dat <- qc_read_raw_data(
 
 if (cnfg$do$trial) {
   if (cnfg$do$verbose) {
-    writeLines("Trial mode: considering max. 50000 station / months.")
+    writeLines("Trial mode: considering the first 50,000 lines.")
   }
   dat <- dat[1:min(nrow(dat), 50000),]
 }
+
+sts <- qc_read_sts_data(path = cnfg$dir$input)
 
 
 # Go through the variables in the file
 for (var in 1:length(cnfg$var$names)) {
   
   if (cnfg$do$verbose) {
-    writeLines(paste0("Processing variable ",  cnfg$var$names[var], ":"))
+    writeLines(paste0("Processing variable ",  cnfg$var$names[var], " (", Sys.time(), ")"))
     writeLines("   Formatting data")
   }
 
@@ -131,20 +170,20 @@ for (var in 1:length(cnfg$var$names)) {
   # All the `qc` methods work by reference, that is they modify the data in the
   # fields of the object, or add new ones.
   
-  # Create and populate a qc object
-  QC <- qc$new(var_type = cnfg$file$type[var],
+  # Create and populate the qc object
+  QC <- qc$new(var_type = cnfg$file$type,
                var_name = cnfg$var$names[var],
                var_longname = cnfg$var$longnames[var],
                var_unit = cnfg$var$units[var]
                )
-  QC$qc_add_data(dat)
+  QC$qc_add_data(dat, sts)
 
 
 
   # Controls in long format -------------------------------------------------
 
   if (cnfg$do$verbose) {
-    writeLines("   Performing controls in long format")
+    writeLines("   Performing controls in long format:")
   }
   
   # A number of controls are applied at the monthly scale: entire months are
@@ -164,6 +203,9 @@ for (var in 1:length(cnfg$var$names)) {
 
   # Finally, we flag months that need to be removed from the dataset (`remove`).
   
+  if (cnfg$do$verbose) {
+    writeLines("      Encoding errors")
+  }
   
   #   determine the number of days in each month
   QC$qc_num_days()
@@ -183,18 +225,22 @@ for (var in 1:length(cnfg$var$names)) {
   #   control: months that are all zero
   QC$qc_zero_months()
 
-  #   control: misencoded months (in ºC, instead of 1/10 ºC)
+  #   control: badly encoded months (in ºC, instead of 1/10 ºC)
   if (cnfg$file$type == 'Termo') {
     QC$qc_misencoded_months()
   }
   
+  if (cnfg$do$verbose) {
+    writeLines("      Duplicated months")
+  }
+
   #   control: duplicated months
   QC$qc_dupl_months_find()
   QC$qc_dupl_months_match()
   QC$qc_dupl_months_dist()
   QC$qc_dupl_months_type()
   QC$qc_dupl_months_prob()
-  
+
   #   control: duplicated dekads
   # TO DO: PROGRAMAR ESTE CONTROL; LOS METADATOS GUARDARLOS EN COLUMNAS DE NOMBRE 'dupl_1_10', 'dupl_match_1_10', ETC.
   # QC$qc_dupl_months_find(start = 1, end = 10)
@@ -203,7 +249,7 @@ for (var in 1:length(cnfg$var$names)) {
   
   #   flag months to remove
   QC$qc_flag_month()
-
+  
   # # Some examples of flagged months:
   # w <- which(QC$long$remove)
   # QC$long[w, ] %>% as.data.frame()
@@ -237,7 +283,7 @@ for (var in 1:length(cnfg$var$names)) {
   # (`data_qc_2`).
   
   if (cnfg$do$verbose) {
-    writeLines("   Performing controls in wide format")
+    writeLines("   Performing controls in wide format:")
   }
 
   #   remove bad months and create first q-controlled data set (`data_qc_1`)
@@ -248,6 +294,11 @@ for (var in 1:length(cnfg$var$names)) {
 
   #   control: stationary periods
   if (cnfg$file$type == 'Termo') {
+    
+    if (cnfg$do$verbose) {
+      writeLines("      Stationary sequences")
+    }
+    
     QC$qc_stationary_sequence()
   }
   
@@ -256,13 +307,21 @@ for (var in 1:length(cnfg$var$names)) {
 
   #   control: false zeros
   if (cnfg$file$type == 'Termo') {
+    
+    if (cnfg$do$verbose) {
+      writeLines("      False zeros")
+    }
+    
     QC$qc_false_zeros()
   }
   
-  #   control: out-of-range values (outliers) - TO DO: mover esto a args (argumentos YAML)
-  QC$qc_outliers(
-    thres = c(cnfg$var$limits$lower[var], cnfg$var$limits$upper[var])
-  )
+  #   control: out-of-range values (outliers)
+  if (cnfg$do$verbose) {
+    writeLines("      Outliers")
+  }
+  
+  thres <- c(cnfg$var$limits$lower[var], cnfg$var$limits$upper[var])
+  QC$qc_outliers(thres)
 
   
   #   control: suspicious values
@@ -279,15 +338,11 @@ for (var in 1:length(cnfg$var$names)) {
 
 
   
-  
   # Inter-variable comparisons ---------------------------------------------
 
   #   compare variables
   # qc <- qc_tmax_tmin_compare()
 
-  
-  
-  
 
   # Export -----------------------------------------------------------------
 
@@ -300,30 +355,27 @@ for (var in 1:length(cnfg$var$names)) {
     dir.create(cnfg$dir$output)
   }
 
-  #   save the `qc` object for further use.
+  #   save the `qc` object
   save(QC,
     file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData")
   )
+  #load(paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData"))
 
-  #   export a clean data set for further use.
-  if (cnfg$do$export_csv) {
-    write.table(
-      x = cbind(
-        QC$wide$id[[1]],
-        QC$wide$data_qc_2[[1]]
-      ),
-      file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".csv.gz") %>%
-        gzfile(),
-      sep = ",",
-      na = "",
-      quote = FALSE,
-      row.names = FALSE,
-      col.names = TRUE
-    )
+  #   export the qc'ed data for further use
+  if (cnfg$do$export) {
+    # dat <- data.frame(
+    #   QC$wide$data_qc_2[[1]],
+    #   row.names = dates <- apply(QC$wide$id[[1]], 1, function(x) {
+    #     as.Date(paste(x, collapse = "-"))
+    #   }
+    #   ) %>% 
+    #     as.Date)
+    # save(dat,
+    #      file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData")
+    # )
   }
 
-  #   export the curated data to the database
-  # TO DO: above.
+  #   export the curated data to the database: TO DO
 
   
 
@@ -339,12 +391,18 @@ for (var in 1:length(cnfg$var$names)) {
     writeLines("   Producing global report")
   }
   
+  # Make sure Pandoc is on the system's path
+  #Sys.setenv(RSTUDIO_PANDOC = rmarkdown::find_pandoc()$dir)
+  Sys.setenv(RSTUDIO_PANDOC = 
+    "/Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools/aarch64")
+#    "/Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools")
+
   rmarkdown::render(
     input = "./R/qc_report.Rmd",
     output_dir = cnfg$dir$output,
     output_file = paste0(cnfg$var$names[var], ".html"),
     envir = parent.frame(),
-    run_pandoc = FALSE # does not render the document in html
+    quiet = TRUE
   )
   
   
@@ -352,11 +410,11 @@ for (var in 1:length(cnfg$var$names)) {
   
   # Produce individual reports for each station.
 
-  if (cnfg$do$verbose) {
-    writeLines("   Producing station reports")
-  }
-
   if (cnfg$do$indiv_reports) {
+    
+    if (cnfg$do$verbose) {
+      writeLines("   Producing station reports")
+    }
     
     report_dir <- paste0(cnfg$dir$output, "/", cnfg$var$names[var], "_reports")
     if (!dir.exists(report_dir)) {
@@ -364,14 +422,17 @@ for (var in 1:length(cnfg$var$names)) {
     }
     
     if (cnfg$do$trial) {
-      nst <- 1:20
+      nst <- 100
     } else {
-      nst <- 1:nrow(QC$stations)
+      nst <- nrow(QC$stations)
     }
-    for (s in nst) {
+    for (s in 1:nst) {
+      #if (length(grep(QC$stations$INDICATIVO[s], list.files(report_dir))) > 0) next()
       QC$qc_report_station(s, report_dir)
     }
     
   }
 
 }
+
+writeLines(paste0("Done (", Sys.time(), ")"))
