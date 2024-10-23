@@ -1,8 +1,19 @@
 # <img src="man/figures/badge.png" alt="image" width="100"/> quality_control
 
-## Description
+## Summary
 
-An R script used to process climate data from AEMET's "Banco Nacional de Datos del Clima" (BNDC) raw files, to be used within CSIC's PTI+ Clima projects. The process performs a series of quality control checks, flags suspect data, and removes it according to a set of rules. The script also prepares the data for further processing within the LCSC data flow.
+An R script used to pre-process climate data from AEMET's "Banco Nacional de Datos del Clima" (BNDC) raw files, to be used within CSIC's PTI+ Clima projects. The process performs a series of quality control checks, flags suspect data, and removes it according to a set of rules. The script also prepares the data for further processing within the LCSC data flow.
+
+This image summarizes the quality-control steps:
+
+<img src="man/figures/diagram-3.jpg" alt="image" />
+
+There is not an exact match between the raw variables provided by the BNDC and the meteorological variables used in the PTI+ Clima. The following image relates the variables in AEMET's BNDC to the variables used in the PTI's process:
+
+<img src="man/figures/diagram-2.png" alt="image" width="1600"/>
+
+
+## Details
 
 The code includes a `main.R` file, which sources a series of files: a configuration file `config.yml` with particularities of how to process each target variable; a functions `functions.R` file with the necessary functions to run the process; a markdown `report.Rmd` file, which is used to produce a global report for the process.
 
@@ -11,14 +22,6 @@ As a result, the script generates an `.Rdata` file for each processed variable. 
 The image below summarises the flow of data and code:
 
 <img src="man/figures/diagram-1.png" alt="Flow of data and code" width="400"/>
-
-This image relates the variables in AEMET's BNDC to the variables used in the PTI's process:
-
-<img src="man/figures/diagram-2.png" alt="image" width="1600"/>
-
-This image summarizes the processes undergone by the PTI variables:
-
-<img src="man/figures/diagram-3.jpg" alt="image" />
 
 
 ## Use instructions
