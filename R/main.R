@@ -8,9 +8,9 @@
 #' version: 0.1 (pre-production).
 #' 
 #' summary: This is the main file that performs the quality-control process.
-#'  It reads or sources all other files (qc_config, qc_functions, qc_report).
-#'  From the console, run: run e.g. `Rscript R/qc_main.R termo`, where 'termo'
-#'  is a named configuration read from the configuration file `qc_config.yml`.
+#'  It reads or sources all other files (config.yml, functions.R, report.Rmd).
+#'  From the console, run: run e.g. `Rscript R/main.R termo`, where 'termo'
+#'  is a named configuration read from the configuration file `config.yml`.
 #'  As a result, the files and variables indicated in the configuration
 #'  arguments are processed, and a number of output files are stored in the
 #'  output directory (also determined in the configuration file). Output files
@@ -43,11 +43,11 @@ suppressPackageStartupMessages(
   ) )
 )
 
-source("./R/qc_functions.R")
+source("./R/functions.R")
 
 # Configuration arguments
 
-# Configuration arguments are defined in file `qc_config.yml`. There are
+# Configuration arguments are defined in file `config.yml`. There are
 # different configuration sets, aimed at different variables in the raw
 # files supplied by AEMET. These configuration sets are named, and the
 # name of the specific configuration set to use needs to be passed as an
@@ -73,7 +73,7 @@ configuration <- cmdline$configuration
 
 
 #   read arguments from config file
-cnfg <- config::get(file = "./R/qc_config.yml", config = configuration[1])
+cnfg <- config::get(file = "./R/config.yml", config = configuration[1])
 
 if(cmdline$trial){
   # override trial cfg of yaml
@@ -81,7 +81,7 @@ if(cmdline$trial){
 }
 
 # To do it manually:
-# cnfg <- config::get(file = "./R/qc_config.yml", config = 'viento_3')
+# cnfg <- config::get(file = "./R/config.yml", config = 'viento_3')
 
 # Read data -----------------------------------------------------------------
 
@@ -152,7 +152,7 @@ for (var in 1:length(cnfg$var$names)) {
   
   if (cnfg$do$verbose) {
     writeLines(paste0("Processing variable ",  cnfg$var$names[var], " (", Sys.time(), ")"))
-    writeLines("   Formatting data")
+    writeLines(">    Formatting data")
   }
 
   # We have defined a class (`qc`) to store both the data and metadata resulting
@@ -183,7 +183,7 @@ for (var in 1:length(cnfg$var$names)) {
   # Controls in long format -------------------------------------------------
 
   if (cnfg$do$verbose) {
-    writeLines("   Performing controls in long format:")
+    writeLines(">    Performing controls in long format:")
   }
   
   # A number of controls are applied at the monthly scale: entire months are
@@ -204,7 +204,7 @@ for (var in 1:length(cnfg$var$names)) {
   # Finally, we flag months that need to be removed from the dataset (`remove`).
   
   if (cnfg$do$verbose) {
-    writeLines("      Encoding errors")
+    writeLines(">    Encoding errors")
   }
   
   #   determine the number of days in each month
@@ -231,7 +231,7 @@ for (var in 1:length(cnfg$var$names)) {
   }
   
   if (cnfg$do$verbose) {
-    writeLines("      Duplicated months")
+    writeLines(">    Duplicated months")
   }
 
   #   control: duplicated months
@@ -283,7 +283,7 @@ for (var in 1:length(cnfg$var$names)) {
   # (`data_qc_2`).
   
   if (cnfg$do$verbose) {
-    writeLines("   Performing controls in wide format:")
+    writeLines(">    Performing controls in wide format:")
   }
 
   #   remove bad months and create first q-controlled data set (`data_qc_1`)
@@ -296,7 +296,7 @@ for (var in 1:length(cnfg$var$names)) {
   if (cnfg$file$type == 'Termo') {
     
     if (cnfg$do$verbose) {
-      writeLines("      Stationary sequences")
+      writeLines(">    Stationary sequences")
     }
     
     QC$qc_stationary_sequence()
@@ -309,7 +309,7 @@ for (var in 1:length(cnfg$var$names)) {
   if (cnfg$file$type == 'Termo') {
     
     if (cnfg$do$verbose) {
-      writeLines("      False zeros")
+      writeLines(">    False zeros")
     }
     
     QC$qc_false_zeros()
@@ -317,7 +317,7 @@ for (var in 1:length(cnfg$var$names)) {
   
   #   control: out-of-range values (outliers)
   if (cnfg$do$verbose) {
-    writeLines("      Outliers")
+    writeLines(">    Outliers")
   }
   
   thres <- c(cnfg$var$limits$lower[var], cnfg$var$limits$upper[var])
@@ -347,7 +347,7 @@ for (var in 1:length(cnfg$var$names)) {
   # Export -----------------------------------------------------------------
 
   if (cnfg$do$verbose) {
-    writeLines("   Saving results")
+    writeLines(">    Saving results")
   }
   
   #   create output dir, if required
@@ -388,7 +388,7 @@ for (var in 1:length(cnfg$var$names)) {
   # Produce a global report considering all the stations in the data set.
   
   if (cnfg$do$verbose) {
-    writeLines("   Producing global report")
+    writeLines(">    Producing global report")
   }
   
   # Make sure Pandoc is on the system's path
@@ -398,7 +398,7 @@ for (var in 1:length(cnfg$var$names)) {
 #    "/Applications/RStudio.app/Contents/Resources/app/quarto/bin/tools")
 
   rmarkdown::render(
-    input = "./R/qc_report.Rmd",
+    input = "./R/report.Rmd",
     output_dir = cnfg$dir$output,
     output_file = paste0(cnfg$var$names[var], ".html"),
     envir = parent.frame(),
@@ -413,7 +413,7 @@ for (var in 1:length(cnfg$var$names)) {
   if (cnfg$do$indiv_reports) {
     
     if (cnfg$do$verbose) {
-      writeLines("   Producing station reports")
+      writeLines(">    Producing station reports")
     }
     
     report_dir <- paste0(cnfg$dir$output, "/", cnfg$var$names[var], "_reports")
