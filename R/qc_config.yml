@@ -1,0 +1,152 @@
+default:
+  version: 1
+  dir:
+    input: "./data_raw"
+    output: "./data/qc"
+  cores: 1 #!expr getOption("mc.cores"
+  do:
+    verbose: TRUE
+    trial: TRUE
+    processing: TRUE
+    export: TRUE
+    global_report: TRUE
+    indiv_reports: FALSE
+
+termo:
+  do:
+    trial: FALSE
+  file:
+    type: "Termo"
+    source: "AEMET"
+  var:
+    names: !expr c("TMAX", "TMIN")
+    longnames: !expr c("Maximum daily temperature", "Minimum daily temperature")
+    units: !expr c("1/10 ºC", "1/10 ºC")
+    limits:
+      lower: !expr c(-300, -300)
+      upper: !expr c(476, 476)
+
+pluvio:
+  file:
+    type: "Pluvio"
+  do:
+    trial: FALSE
+    indiv_reports: FALSE
+  var:
+    names: "P"
+    longnames: "Daily cumulative precipitation"
+    units: "1/10 mm"
+    limits:
+      lower: !expr 0
+      upper: !expr 10000
+
+canmaxpcp:
+  file:
+    type: "CanMaxPCP"
+  do:
+    trial: FALSE
+  var:
+    names: !expr c("PMAX10", "PMAX20", "PMAX30", "PMAX60", "PMAX2H", "PMAX6H", "PMAX12H")
+    longnames: !expr c("Maximum 10-minutes precipitation intensity", "Maximum 20-minutes precipitation intensity", "Maximum 30-minutes precipitation intensity", "Maximum 60-minutes precipitation intensity", "Maximum 2-hours precipitation intensity", "Maximum 6-hours precipitation intensity", "Maximum 12-hours precipitation intensity")
+    units: !expr c("1/10 mm", "1/10 mm", "1/10 mm", "1/10 mm", "1/10 mm", "1/10 mm", "1/10 mm")
+    limits:
+      lower: !expr c(0, 0, 0, 0, 0, 0, 0)
+      upper: !expr c(10000, 10000, 10000, 10000, 10000, 10000, 10000)
+
+humedad:
+  file:
+    type: "Humedad"
+  do:
+    trial: FALSE
+    indiv_reports: FALSE
+  var:
+    names: !expr c("HU00", "HU07", "HU13", "HU18", "HUMAX", "HUMIN")
+    longnames: !expr c("Relative humidity at 00 h", "Relative humidity at 07 h", "Relative humidity at 13 h", "Relative humidity at 18 h", "Maximum daily relative humidity", "Minimum daily relative humidity")
+    units: !expr c("%", "%", "%", "%", "%", "%")
+    limits:
+      lower: !expr 0
+      upper: !expr 100
+
+presion:
+  file:
+    type: "Presion"
+  do:
+    trial: FALSE
+    indiv_reports: TRUE
+  var:
+    names: !expr c("PRES00", "PRES07", "PRES13", "PRES18", "PRESMAX", "PRESMIN")
+    longnames: !expr c("Air pressure at 00 h", "Air pressure at 07 h", "Air pressure at 13 h", "Air pressure at 18 h", "Maximum daily air pressure", "Minimum daily air pressure")
+    units: !expr c("1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa", "1/10 hPa")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_1:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+    indiv_reports: TRUE
+  var:
+    names: !expr c("VEL_00", "VEL_07", "VEL_13", "VEL_18", "R_MAX_VEL")
+    longnames: !expr c("Wind velocity at 00 h", "Wind velocity at 07 h", "Wind velocity at 13 h", "Wind velocity at 18 h", "Highest daily wind gust")
+    units: !expr c("Km h-1", "Km h-1", "Km h-1", "Km h-1", "Km h-1")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_2:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+#    indiv_reports: TRUE
+  var:
+    names: !expr c("REC24", "REC77")
+    longnames: !expr c("Daily wind travel 00-24 h", "Daily wind travel 07-07 h")
+    units: !expr c("Km", "Km")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+viento_3:
+  file:
+    type: "Viento"
+  do:
+    trial: FALSE
+    indiv_reports: TRUE
+  var:
+    names: !expr c("DIR_00", "DIR_07", "DIR_13", "DIR_18", "R_MAX_DIR")
+    longnames: !expr c("Wind direction at 00 h", "Wind direction at 07 h", "Wind direction at 13 h", "Wind direction at 18 h", "Direction of the highest daily wind gust")
+    units: !expr c("1/10 º", "1/10 º", "1/10 º", "1/10 º", "1/10 º")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
+
+insolacion:
+  file:
+    type: "Insolacion"
+  do:
+    trial: FALSE
+#    indiv_reports: TRUE
+  var:
+    names: "TOTSOL"
+    longnames: "Total daily insolation"
+    units: "1/10 h"
+    limits:
+      lower: !expr 0
+      upper: !expr 160
+    
+radiacion:
+  file:
+    type: "Radiacion"
+  do:
+    trial: FALSE
+#    indiv_reports: TRUE
+  var:
+    names: !expr c("RDIRDIA", "RDIFDIA", "RGLODIA")
+    longnames: !expr c("Total daily direct radiation", "Total daily difuse radiation", "Total daily global radiation")
+    units: !expr c("10 kJ m-2", "10 kJ m-2", "10 kJ m-2")
+    limits:
+      lower: !expr 0
+      upper: !expr Inf
