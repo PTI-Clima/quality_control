@@ -10,7 +10,7 @@ As a result, the script generates an `.Rdata` file for each processed variable. 
 
 The image below summarises the flow of data and code:
 
-<img src="man/figures/diagram-1.png" alt="Flow of data and code" width="600"/>
+<img src="man/figures/diagram-1.png" alt="Flow of data and code" width="400"/>
 
 This image relates the variables in AEMET's BNDC to the variables used in the PTI's process:
 
