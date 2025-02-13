@@ -1,0 +1,21 @@
+name: Sync Tag to PTI-Clima Organization
+on:
+  push:
+    tags:
+    - "**" # Triggers on any tag
+
+jobs:
+  sync-tag:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Replicate tag in target organization
+      env:
+        TARGET_REPO: "https://github.com/PTI-Clima/quality_control.git"
+        GH_TOKEN: ${{ secrets.PTI_PAT }} # Token with permissions in your organization
+      run: |
+        # Retrieve the tag name
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        # Clone target repository and push the tag
+        git clone --bare "$TARGET_REPO" target-repo
+        cd target-repo
+        git push origin refs/tags/$TAG_NAME
