@@ -13,14 +13,11 @@ jobs:
           ORG_PAT: ${{ secrets.ORG_PAT }}
           DEST_PAT: ${{ secrets.DEST_PAT }}
           DEST_ORG: "PTI-Clima"
+          BRANCH: "main"
         run: |
           OWNER_NAME=${{ github.repository_owner }}
-          echo $OWNER_NAME
           REPO_NAME=${GITHUB_REPOSITORY#*/}
-          echo $REPO_NAME
-          # Obtener el nombre del tag
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          echo $TAG_NAME
 
           if [[ "$GITHUB_REPOSITORY" == "${DEST_ORG}/${REPO_NAME}" ]]; then
             echo "This is the destination repository. Ending workflow."
@@ -29,5 +26,5 @@ jobs:
 
           git clone "https://oauth2:${ORG_PAT}@github.com/${OWNER_NAME}/${REPO_NAME}.git"
           cd $REPO_NAME
-          git push "https://oauth2:${DEST_PAT}@github.com/${DEST_ORG}/${REPO_NAME}.git" master
+          git push "https://oauth2:${DEST_PAT}@github.com/${DEST_ORG}/${REPO_NAME}.git" $BRANCH
           git push "https://oauth2:${DEST_PAT}@github.com/${DEST_ORG}/${REPO_NAME}.git" refs/tags/$TAG_NAME
