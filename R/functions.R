@@ -236,7 +236,9 @@ suppressPackageStartupMessages(
 #' function to know what data structure to expect.
 #'
 #' @export
-qc_read_raw_data <- function(path, type, source = "AEMET") {
+qc_read_raw_data <- function(cnfg, source = "AEMET") {
+  
+  type <- cnfg$file$type
   
   # If source is not AEMET use the appropriate function
   # TO DO: include all data sources into a single function
@@ -253,27 +255,41 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
     error("Type must be one of:", paste(valid_types, collapse = ', '))
   }
   
-  # Get the list of text files for the variable of interest
-  if (grepl(".csv.gz", path)) {
-    files <- path
-  } else {
-    files <- list.files(
-      path = path,
-      pattern = paste0("^(\\w*)(", type, ")(\\w*)(.csv.gz)$"),
-      full.names = TRUE, recursive = TRUE
-    )
-    files <- files[!grepl("Description", files)]
-    files <- files[!grepl("Maestro", files)]
-  }
+  # Get the list of files to read
+  buck <- aws.s3::get_bucket_df("aemet-historico", 
+                     base_url=cnfg$minio$endpoint, 
+                     key=cnfg$minio$access_key, 
+                     secret=cnfg$minio$secret_key,
+                     delimiter="/",
+                     region="",
+                     use_https=TRUE)
+  files <- buck$Key
   
-  # Read the data
+  # Filter by variable of interest
+  files <- files[!grepl("Description", files)]
+  files <- files[!grepl("Maestro", files)]
+  files <- files[grepl(paste0("^(\\w*)(", type, ")(\\w*)(.csv.gz)$"), files)]
+  
+  # Join into a single dataframe
   DF <- NULL
   for (f in files) {
     DF <- rbind(
       DF,
-      read.table(
-        file = f, sep = ";", header = TRUE,
-        encoding = "latin1", quote = "", dec = ","
+      s3read_using(FUN = read.table, 
+                   sep = ";", 
+                   header = TRUE, 
+                   encoding = "latin1", 
+                   quote = "", 
+                   dec = ",", 
+                   object = f, 
+                   bucket = "aemet-historico",  
+                   opts = list(  base_url = cnfg$minio$endpoint, 
+                                 key = cnfg$minio$access_key, 
+                                 secret = cnfg$minio$secret_key, 
+                                 delimiter = "/",
+                                 prefix = "/",
+                                 region = "", 
+                                 use_https = TRUE)
       )
     )
   }
@@ -316,23 +332,113 @@ qc_read_raw_data <- function(path, type, source = "AEMET") {
   
 }
 
-qc_read_sts_data <- function(path, type, source = "AEMET") {
+qc_read_sts_data <- function(cnfg, type, source = "AEMET") {
   
-  file <- list.files(
-    path = path,
-    pattern = paste0("(Maestro_estaciones_)\\w+(.csv)"),
-    full.names = TRUE
-  )
   
-  sts <- read.table(file = file,
-                    sep = ";",
-                    header = TRUE) %>% 
-    dplyr::select(INDICATIVO:TIPOS)
+  # Get the list of files to read
+  buck <- aws.s3::get_bucket_df("aemet-historico", 
+                                base_url=cnfg$minio$endpoint, 
+                                key=cnfg$minio$access_key, 
+                                secret=cnfg$minio$secret_key,
+                                delimiter="/",
+                                region="",
+                                use_https=TRUE)
+  files <- buck$Key
+
+  # Get the data  
+  sts <- s3read_using(FUN = read.table, 
+               sep = ";", 
+               header = TRUE, 
+               object = files[grepl(paste0("(Maestro_estaciones_)\\w+(.csv)"), files)], 
+               bucket = "aemet-historico",  
+               opts = list(  base_url = cnfg$minio$endpoint, 
+                             key = cnfg$minio$access_key, 
+                             secret = cnfg$minio$secret_key, 
+                             delimiter = "/",
+                             prefix = "/",
+                             region = "", 
+                             use_https = TRUE)
+  ) %>% 
+  dplyr::select(INDICATIVO:TIPOS)
 
   return(sts)
   
 }
 
+# Database functions ------------------------------------------------------
+
+#' Establish a Database Connection
+#'
+#' This function connects to a PostgreSQL database using the given configuration.
+#'
+#' @param config A list containing database connection details, structured as:
+#'   - `db$host`: Database host address
+#'   - `db$port`: Database port
+#'   - `db$name`: Database name
+#'   - `db$password`: Database password
+#'   - `db$user`: Database username
+#'
+#' @return A database connection object.
+#' @import RPostgreSQL
+#' @export
+#'
+#' @examples
+#' 
+#' config <- list(
+#'   db = list(
+#'     host = "localhost",
+#'     port = 5432,
+#'     name = "mydatabase",
+#'     user = "myuser",
+#'     password = "mypassword"
+#'   )
+#' )
+#' 
+#' con <- db_connect(config)
+#' 
+#' # Don't forget to disconnect when done
+#' # dbDisconnect(con)
+db_connect <- function(config) {
+  
+  db_host <- config$db$host
+  db_port <- config$db$port
+  db_name <- config$db$name
+  db_password <- config$db$password
+  db_user <- config$db$user
+  
+  drv <- dbDriver("Postgres")
+  
+  con <- dbConnect(drv,
+                   dbname = db_name,
+                   host=db_host,
+                   port=db_port,
+                   password=db_password,
+                   user=db_user,
+                   sslmode="require")
+  
+  # Test it works
+  # dbListTables(con)
+  
+  return(con)
+  
+}
+
+#' Disconnect from a Database
+#'
+#' This function safely disconnects from a given database connection.
+#'
+#' @param con A database connection object to be closed.
+#'
+#' @return NULL, invisibly.
+#' @import RPostgreSQL
+#' @export
+#'
+#' @examples
+#' 
+#' db_disconnect(con)
+db_disconnect <- function(con) {
+  dbDisconnect(con)
+}
 
 
 # qc_class basics ---------------------------------------------------------
