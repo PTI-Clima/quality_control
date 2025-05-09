@@ -6,7 +6,8 @@ This repository contains an R-based pipeline for automated quality control (QC) 
 
 In practice, this QC step is the **first stage** of the climate data processing workflow within CSIC’s PTI+ Clima projects. After quality control, the data can be confidently used in subsequent processes such as gap-filling (estimating missing values), homogenization of time series (adjusting for changes in station location or instrumentation), calculation of climatological summaries, and spatial gridding of the data for mapping. **Quality control (“Pre-processing”) provides the foundation for all later steps** – by catching and removing bad data early, it ensures that later analyses are not skewed by outliers or errors. For context, the diagram below (in Spanish) illustrates where QC fits in the broader climate data flow, coming before gap-filling, homogenization, climatologies, and gridding steps:
 
-![Quality control](./img/figure1.png)
+<img src="../man/figures/diagram-3.jpg" alt="image" />
+
 *Figure: The quality control stage (labeled "Pre-processing") is the first part of the PTI-Clima data workflow, followed by gap-filling (and its validation), homogenization, climatology calculation, and gridding (with its validation). This QC repository deals with the **Pre-processing** step, ensuring data quality before the data proceeds to these subsequent stages.*
 
 
@@ -21,6 +22,8 @@ In practice, this QC step is the **first stage** of the climate data processing 
 * *(Optional:* There is a `man/` directory with a `figures/` subfolder containing documentation diagrams used for explanation, but this does not affect the code.)
 
 **Data Input/Output:** The pipeline expects raw data files (e.g., CSV files) from BNDC to be available in a specified **input directory**, and it will produce cleaned data and reports in a specified **output directory**. These paths are configured in the YAML file. The diagram below shows the overall flow of data and code in this QC process:
+
+<img src="../man/figures/diagram-1.png" alt="Architecture of the quality control pipeline" width="400"/>
 
 *Figure: Architecture of the quality control pipeline. The main script (`qc_main.R`) reads input data files from the raw data directory and uses the configuration (`qc_config.yml`) along with helper functions (`qc_functions.R`) and a reporting template (`qc_report.Rmd`). It produces an R data file (`qc<var>.Rdata`) containing the processed data and metadata for the given variable, a summary HTML report (`qc<var>.html`), and individual station reports (`qc/<var>_reports/`) for detailed per-station diagnostics.*
 
@@ -45,6 +48,8 @@ As shown above, when you run the main script for a particular variable (indicate
 6. **Completion:** Once finished, the cleaned data (in the RData file) and the reports are ready in the output directory. At this point, the data is considered "quality-controlled" and can be passed on to the next stages of the workflow (e.g., gap-filling algorithms, which would read the RData, fill missing values, etc.).
 
 Throughout the process, the **configuration file** controls what happens for each variable. In `qc_config.yml`, each **named section** corresponds to a dataset (or group of related variables) to process. Because AEMET’s raw data uses different codes for various measurements and PTI-Clima has its own standardized variable naming, the config also maps between them. For example, AEMET might record daily total precipitation under the column "P" in its files, but internally we might refer to it as "pr" (for precipitation) in the PTI system. The config ensures the script knows that "P" corresponds to the precipitation variable and what units or limits it has. The image below illustrates the relationship between AEMET’s BNDC variable codes (green boxes on the left of each pair) and the PTI/LCSC standardized variable names (green boxes on the right) for various climate elements:
+
+<img src="../man/figures/diagram-2.png" alt="Variable mapping between AEMET and PTI-Clima variable names" width="1600"/>
 
 *Figure: Mapping between raw AEMET variable codes and the internal PTI-Clima variable names. For instance, daily maximum and minimum temperature (`TMAX` and `TMIN` in AEMET data) are mapped to `tmax` and `tmin` respectively in the PTI system; relative humidity observations (`HU00`, `HU07`, etc. in AEMET at different times) map to humidity metrics `hr` or `hr2`; precipitation variables (`P` for daily total, `PMAX10`, `PMAX20`, etc. for rainfall intensity over various durations) map to `pr` and related standardized names; wind speed (`VEL_00`, etc.) maps to `ws`, wind gust (`MAX_VEL`) to `wmax`, and so on. This mapping is defined in the config file so that the QC code knows how to interpret each column of the raw data.)*
 
