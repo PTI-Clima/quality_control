@@ -11,6 +11,16 @@ default:
     export: TRUE
     global_report: TRUE
     indiv_reports: FALSE
+  db:
+    host: "lisuarte.eead.csic.es"
+    port: 8013
+    name: "aemet"
+    user: "postgres"
+    password: "XXXXXX"
+  minio:
+    endpoint: "lisuarte.eead.csic.es:8000"
+    access_key: "pAPcpIHn2Agb9cLLKXv5"
+    secret_key: "XXXXXX"
 
 termo:
   do:

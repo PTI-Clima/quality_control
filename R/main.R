@@ -39,7 +39,10 @@ if (!require('pacman')) install.packages('pacman')
 suppressPackageStartupMessages(
   suppressWarnings( pacman::p_load(
     tidyverse,
-    argparser
+    argparser,
+    DBI,
+    RPostgres,
+    aws.s3
   ) )
 )
 
@@ -74,11 +77,15 @@ configuration <- cmdline$configuration
 
 #   read arguments from config file
 cnfg <- config::get(file = "./R/config.yml", config = configuration[1])
+# cnfg <- config::get(file = "./R/config.yml", config = "viento_1")
 
 if(cmdline$trial){
   # override trial cfg of yaml
   cnfg$do$trial=TRUE
 }
+
+# Database connection
+con <- db_connect(cnfg)
 
 # To do it manually:
 # cnfg <- config::get(file = "./R/config.yml", config = 'viento_3')
@@ -132,10 +139,7 @@ if (cnfg$do$verbose) {
   writeLines(paste0("Reading data files (", Sys.time(), ")"))
 }
 
-dat <- qc_read_raw_data(
-  path = cnfg$dir$input,
-  type = cnfg$file$type
-)
+dat <- qc_read_raw_data(cnfg)
 
 if (cnfg$do$trial) {
   if (cnfg$do$verbose) {
@@ -144,7 +148,7 @@ if (cnfg$do$trial) {
   dat <- dat[1:min(nrow(dat), 50000),]
 }
 
-sts <- qc_read_sts_data(path = cnfg$dir$input)
+sts <- qc_read_sts_data(cnfg)
 
 
 # Go through the variables in the file
@@ -177,7 +181,6 @@ for (var in 1:length(cnfg$var$names)) {
                var_unit = cnfg$var$units[var]
                )
   QC$qc_add_data(dat, sts)
-
 
 
   # Controls in long format -------------------------------------------------
@@ -360,6 +363,22 @@ for (var in 1:length(cnfg$var$names)) {
     file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData")
   )
   #load(paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData"))
+  
+  # Transform data into long format
+  DBdat <- QC$wide$data_qc_2[[1]] %>% 
+    as.data.frame() %>% 
+    mutate(date = seq.Date(from=as.Date("1961-01-01"), length.out = nrow(QC$wide$data_qc_2[[1]]), by=1)) %>%
+    pivot_longer(-date, names_to = "id", values_to = "value") %>%
+    mutate(year = year(date), 
+           month = month(date), 
+           day = day(date)) %>%
+    select(id, value, year, month, day)
+  
+  # Write out to the DB
+  dbWriteTable(con, name = Id(schema = "quality_control", table = tolower(cnfg$var$names[var])),
+              value = DBdat, row.names = FALSE, overwrite = TRUE)
+  dbWriteTable(con, name = Id(schema = "quality_control", table = paste0(tolower(cnfg$var$names[var]), "_meta")),
+               value = QC$stations, row.names = FALSE, overwrite = TRUE)
 
   #   export the qc'ed data for further use
   if (cnfg$do$export) {
@@ -368,14 +387,13 @@ for (var in 1:length(cnfg$var$names)) {
     #   row.names = dates <- apply(QC$wide$id[[1]], 1, function(x) {
     #     as.Date(paste(x, collapse = "-"))
     #   }
-    #   ) %>% 
+    #   ) %>%
     #     as.Date)
     # save(dat,
     #      file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData")
     # )
   }
 
-  #   export the curated data to the database: TO DO
 
   
 
