@@ -39,7 +39,10 @@ if (!require('pacman')) install.packages('pacman')
 suppressPackageStartupMessages(
   suppressWarnings( pacman::p_load(
     tidyverse,
-    argparser
+    argparser,
+    DBI,
+    RPostgres,
+    aws.s3
   ) )
 )
 
@@ -74,7 +77,7 @@ configuration <- cmdline$configuration
 
 #   read arguments from config file
 cnfg <- config::get(file = "./R/config.yml", config = configuration[1])
-# cnfg <- config::get(file = "./R/config.yml", config = "termo")
+# cnfg <- config::get(file = "./R/config.yml", config = "viento_1")
 
 if(cmdline$trial){
   # override trial cfg of yaml
@@ -178,7 +181,6 @@ for (var in 1:length(cnfg$var$names)) {
                var_unit = cnfg$var$units[var]
                )
   QC$qc_add_data(dat, sts)
-
 
 
   # Controls in long format -------------------------------------------------
@@ -363,7 +365,7 @@ for (var in 1:length(cnfg$var$names)) {
   #load(paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData"))
   
   # Transform data into long format
-  dat <- QC$wide$data_qc_2[[1]] %>% 
+  DBdat <- QC$wide$data_qc_2[[1]] %>% 
     as.data.frame() %>% 
     mutate(date = seq.Date(from=as.Date("1961-01-01"), length.out = nrow(QC$wide$data_qc_2[[1]]), by=1)) %>%
     pivot_longer(-date, names_to = "id", values_to = "value") %>%
@@ -374,7 +376,7 @@ for (var in 1:length(cnfg$var$names)) {
   
   # Write out to the DB
   dbWriteTable(con, name = Id(schema = "quality_control", table = tolower(cnfg$var$names[var])),
-              value = dat, row.names = FALSE, overwrite = TRUE)
+              value = DBdat, row.names = FALSE, overwrite = TRUE)
   dbWriteTable(con, name = Id(schema = "quality_control", table = paste0(tolower(cnfg$var$names[var]), "_meta")),
                value = QC$stations, row.names = FALSE, overwrite = TRUE)
 
@@ -385,14 +387,13 @@ for (var in 1:length(cnfg$var$names)) {
     #   row.names = dates <- apply(QC$wide$id[[1]], 1, function(x) {
     #     as.Date(paste(x, collapse = "-"))
     #   }
-    #   ) %>% 
+    #   ) %>%
     #     as.Date)
     # save(dat,
     #      file = paste0(cnfg$dir$output, "/", cnfg$var$names[var], ".RData")
     # )
   }
 
-  #   export the curated data to the database: TO DO
 
   
 
