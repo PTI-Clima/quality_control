@@ -10,8 +10,8 @@ jobs:
     steps:
       - name: Mirror repo manually
         env:
-          S_O_PAT: ${{ secrets.ORIG_PAT }}
-          S_D_PAT: ${{ secrets.DEST_PAT }}
+          ENV_ORIG: ${{ secrets.SEC_ORIG }}
+          ENV_DEST: ${{ secrets.SEC_DEST }}
           DEST_ORG: "PTI-Clima"
           BRANCH: "main"
         run: |
@@ -24,7 +24,7 @@ jobs:
             exit 0
           fi
 
-          git clone "https://oauth2:${S_O_PAT}@github.com/${OWNER_NAME}/${REPO_NAME}.git"
+          git clone "https://oauth2:${ENV_ORIG}@github.com/${OWNER_NAME}/${REPO_NAME}.git"
           cd $REPO_NAME
-          git push "https://oauth2:${S_D_PAT}@github.com/${DEST_ORG}/${REPO_NAME}.git" $BRANCH
-          git push "https://oauth2:${S_D_PAT}@github.com/${DEST_ORG}/${REPO_NAME}.git" refs/tags/$TAG_NAME
+          git push "https://oauth2:${ENV_DEST}@github.com/${DEST_ORG}/${REPO_NAME}.git" $BRANCH
+          git push "https://oauth2:${ENV_DEST}@github.com/${DEST_ORG}/${REPO_NAME}.git" refs/tags/$TAG_NAME
